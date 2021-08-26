@@ -5,10 +5,9 @@
 	- SMILES 
 	- continuous *normalized* segmentation features values from software such as acapella or cellprofiler 
 2. Find overlap of compounds with the MELLODDY dataset 
-3. Create files for sparsechem
-   At least two approaches are possible : <br>
-		1. Only recreate Y by filtering Y_melloddy and reordering the rows (also the fold vector)<br>
-		2. Go through melloddy tuner again with only the compounds with images, then align the Xi with the Y rows from tuner. This is the preferred/recommended approach in order to avoid tasks during training that are populated too low. Additionally, it helps to identify the duplicate and invalid SMILES in the dataset. <br>
+3. Create files for sparsechem <br>
+	The following approach is preferred/recommended : <br>
+	Go through melloddy tuner again with only the compounds with images, then align the Xi with the Y rows from tuner. This approach has the advantage that it avoids tasks during training that are populated too low. Additionally, it helps to identify the duplicate and invalid SMILES in the dataset. <br>
 The notebooks will expect .npy file format for the X and Y matrices after reordering
 
 
