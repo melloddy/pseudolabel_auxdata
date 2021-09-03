@@ -4,3 +4,6 @@ files
 images*
 *@eaDir
 .*
+*.csv
+HP_scan*
+images
