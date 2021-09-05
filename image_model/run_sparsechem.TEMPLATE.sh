@@ -15,7 +15,7 @@ date1=`date`
 echo $date1
 
 python $train \
-  --x $data_path/cls/cls_T11_x.npz \
+  --x $data_path/cls/cls_T11_x_features.npz \
   --y $data_path/cls/cls_T10_y.npz \
   --folding $data_path/cls/cls_T11_fold_vector.npy \
   --weights_class $data_path/cls/cls_weights.csv \

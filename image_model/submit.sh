@@ -14,7 +14,7 @@
 train_path=/home/rama.jabal/Melloddy/sparsechem/examples/chembl/train.py
 
 # Full path to matrices, e.g.: /home/user/data_prep/out/run/matrices/
-data_path=/home/rama.jabal/Melloddy/aux_data/pseudolabel_auxdata/datapreperation/images/output_files/image_model/matrices/
+data_path=/home/rama.jabal/Melloddy/aux_data/pseudolabel_auxdata/datapreperation/images_files/output_files/image_model/matrices/
 
 if type srun > /dev/null 2>&1; then
     srun ./run_sparsechem.sh $train_path $data_path
