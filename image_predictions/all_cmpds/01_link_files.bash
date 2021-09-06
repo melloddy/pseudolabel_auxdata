@@ -2,7 +2,7 @@
 
 path_matrices='../../scripts_and_notebooks/files'
 
-path_model="../../image_model_training/HP_scan_image_model/Run_231_epoch_lr_step_20_10_drop_0.2_size_125125125/models/"
+path_model="../../image_model_training/HP_scan_image_model/Run_/models/" #path towards the best image-based model
 
 # 01: link data
 ln -s $path_matrices/x_sparse_step2_inference_allcmpds.npz

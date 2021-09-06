@@ -1,9 +1,9 @@
 #!/bin/bash
 
 path_matrices='../../scripts_and_notebooks/files'
-tuner_output_images='../../datapreperation/images_files/output_files/image_model'
+tuner_output_images='../../datapreperation/images_files/output_files/image_model' #path towards Melloddy Tuner output for labeled images
 
-path_model="../../image_model_training/HP_scan_image_model/Run_231_epoch_lr_step_20_10_drop_0.2_size_125125125/models/"
+path_model="../../image_model_training/HP_scan_image_model/Run_/models/"  #path towards the best image-based model
 
 # 01: link data
 ln -s $path_matrices/y_sparse_step1_main_tasks_fold2.npy
