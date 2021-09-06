@@ -2,7 +2,7 @@
 
 predict=$1
 
-mkdir -p cls
+mkdir -p preds
 
 {
 tstart=`date +%s.%N`
