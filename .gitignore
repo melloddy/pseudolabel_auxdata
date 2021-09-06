@@ -1,4 +1,4 @@
-scripts_and_notebooks/.ipynb_checkpoints/
+scripts_and_notebooks/.ipynb_checkpoints/*
 cp
 files
 images*
@@ -7,3 +7,9 @@ images*
 *.csv
 HP_scan*
 images
+*.pt
+*.json
+*.npy
+*.npz
+analysis
+*.dat
