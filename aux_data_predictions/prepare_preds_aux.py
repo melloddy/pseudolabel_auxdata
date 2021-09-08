@@ -38,6 +38,6 @@ for ppv_npv in ppv_npv_list:
 
             # Replace placeholders for hyperparameters
             for line in template:
-                script.write(line.replace("PPV_NPV", str(ppv_npv).replace(".","_")))
+                script.write(line.replace("RUN_NUM", str(num)).replace("PPV_NPV", str(ppv_npv).replace(".","_")))
                 
                 
