@@ -6,7 +6,7 @@ path_model="../../image_model_training/HP_scan_image_model/Run_140_epoch_lr_step
 
 # 01: link data
 ln -s $path_matrices/x_sparse_step2_inference_allcmpds.npz
-ln -s $path_matrices/y_sparse_step2_inference_allcmpds.npy
+ln -s $path_matrices/y_sparse_step2_inference_allcmpds.npz
 
 # 02: link model
 

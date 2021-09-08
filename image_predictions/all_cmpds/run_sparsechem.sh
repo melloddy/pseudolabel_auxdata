@@ -11,7 +11,7 @@ echo $date1
 
 python $predict \
   --x x_sparse_step2_inference_allcmpds.npz \
-  --y y_sparse_step2_inference_allcmpds.npy \
+  --y y_sparse_step2_inference_allcmpds.npz \
   --conf image_model.json \
   --model image_model.pt \
   --outprefix "preds/pred_cpmodel_step2_inference_allcmpds"
