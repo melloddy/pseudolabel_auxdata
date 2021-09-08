@@ -4,9 +4,11 @@ import os
 import shutil
 import fileinput
 
-hidden_sizes = '1200'#['50','100','200','400','1000','2000','125 67','250 125','500 250','750 375','1000 500','125 67 32','250 125 67' '500 250 125', '250 250 250', '125 125 125', '500 125 125', '250 67 67', '125 34 34' ]
-epochs_lr_steps= (20,10) #[(5,3),(10,5),(20,10)]
-dropouts= 0.8 #[0.6,0.4,0.2,0.1,0.]
+## Fill in Melloddy model best hyperparamters 
+hidden_sizes = 
+epochs_lr_steps= 
+dropouts= 
+
 ppv_npv_list = [0
        ,0.2
        ,0.4
@@ -27,7 +29,7 @@ for ppv_npv in ppv_npv_list:
     # Remove spaces in hidden layers (for file name)
     hidden_name=hidden_sizes.replace(" ", "")
     ppv_npv_name=str(ppv_npv).replace(".","_")
-    run_name=f"Run_{num}_epoch_lr_step_{epochs_lr_steps[0]}_{epochs_lr_steps[1]}_drop_{dropouts}_size_{hidden_name}_ppv{ppv_npv_name}_npv{ppv_npv_name}"
+    run_name=f"Run_{num}_ppv{ppv_npv_name}_npv{ppv_npv_name}"
     
     # Create script folder and create script
     os.mkdir(f"ppv_npv_scan/{run_name}")	
