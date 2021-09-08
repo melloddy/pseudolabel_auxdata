@@ -3,7 +3,7 @@
 
 params_dir='../../data/Input' # path to parameters.json file: ./example_parameters.json
 
-path_T_files='./images/input_hofmarcher'
+path_T_files='./images_files/input_hofmarcher'
 
 outdir='./images_files/output_files'
 

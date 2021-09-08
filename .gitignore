@@ -13,3 +13,6 @@ images
 *.npz
 analysis
 *.dat
+ppv_npv_scan
+models
+baseline_plus_aux_data*
