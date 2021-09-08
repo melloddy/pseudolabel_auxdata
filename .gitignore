@@ -14,5 +14,6 @@ images
 analysis
 *.dat
 ppv_npv_scan
+ppv_npv_preds
 models
 baseline_plus_aux_data*
