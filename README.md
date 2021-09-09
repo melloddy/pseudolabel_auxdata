@@ -13,12 +13,12 @@ Step 1: model training using image features
 
 1. Update submit.sh in image_model_training
 2. Execute 01_setup_run_folders.bash and 02_submit_all.bash. This will initiate HP scan.
-3. Identify the best model using scripts_and_notebooks/step1_3_HP_selection.ipynb - take the first one outputted (CHECK WITH WOUTER) 
+3. Identify the best model using scripts_and_notebooks/step1_3_HP_selection.ipynb - take the last one outputted by the notebook
 
 Step 2:
 1. Run scripts_and_notebooks/step2_1_ysparse_generation_main_quality_tasks_fold2.ipynb
-2. Use that model to execute image_predictions/main_tasks_fold2
-    - you might need to edit paths in image_predictions/main_tasks_fold2/01_link_files.bash and image_predictions/main_tasks_fold2/02_submit_predict.sh
+2. Use the best model identified in 1.3 to execute image_predictions/main_tasks_fold2
+    - you need to edit paths in image_predictions/main_tasks_fold2/01_link_files.bash and image_predictions/main_tasks_fold2/02_submit_predict.sh
 3. Run scripts_and_notebooks/step2_2_CPfitting.ipynb, step2_3_taskstats.ipynb and step2_4_ysparse_inference.ipynb
 4. Execute scripts in image_predictions/all_cmpds
     - you might need to edit paths in image_predictions/all_cmpds/01_link_files.bash and image_predictions/all_cmpds/02_submit_predict.sh
@@ -29,3 +29,16 @@ Step 2:
 7. Run scripts_and_notebooks/step2_7_labels_to_auxtasks.ipynb
     - tuner_output_baseline there refers to results of melloddy tuner without images 
 8. Run scripts_and_notebooks/step2_8_concat_label_imputation.ipynb
+
+Step 3:
+1. Execute scripts in aux_data_preparation/
+    - will take as much time as a melloddy tuner run on your original data (or more :))
+2. Run scripts_and_notebooks/step3_1_confidence_selection.ipynb
+3. Execute scripts in aux_data_training/
+    - you need to edit paths in submit_aux.sh and 03_run_sparsechem_baseline.sh
+    - in 03_run_sparsechem_baseline.sh change model HPs to the optimal ones for your MELLODDY dataset
+    - you also need to put these parameters in prepare_HP_scan_aux.py (as strings)
+4. Run scripts_and_notebooks/step3_2_y_sparse_generation_inference.ipynb
+5. Execute scripts in aux_data_predictions/
+    - edit paths/envs in submit_baseline.sh and submit_aux.sh
+6. Run scripts_and_notebooks/step3_3_evaluation.ipynb
