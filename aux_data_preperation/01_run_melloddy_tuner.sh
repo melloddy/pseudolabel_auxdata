@@ -1,13 +1,13 @@
 #!/bin/bash
 
 
-params_dir='../../data/Input' # path to parameters.json file: ./example_parameters.json
 
 path_T_files='../scripts_and_notebooks/files/baseline_plus_aux_data/'
+params_dir=$(cat ./00_parameter_path.dat)
 
-outdir='.'
 
-
+outdir=.
+    
 tunercli prepare_4_training \
 --structure_file $path_T_files/T2_image_pseudolabels_plus_baseline.csv \
 --activity_file $path_T_files/T1_image_pseudolabels_plus_baseline.csv \
@@ -19,4 +19,7 @@ tunercli prepare_4_training \
 --tag cls \
 --folding_method scaffold \
 --number_cpu 8 \
---ref_hash $params_dir/ref_hash.json \
+--ref_hash $params_dir/ref_hash.json 
+    
+
+
