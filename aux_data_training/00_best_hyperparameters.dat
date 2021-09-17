@@ -1,0 +1,1 @@
+{'hidden_sizes': 1200, 'epochs_lr_steps' : (20,10), 'dropouts' : 0.8}

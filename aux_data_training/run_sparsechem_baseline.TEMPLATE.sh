@@ -35,7 +35,7 @@ python $train \
   --fold_va 2 \
   --fold_te 0 \
   --verbose 1 \
-  --save_model 1 \
+  --save_model 0 \
   --run_name classification_baseline
 
 tend=`date +%s.%N`

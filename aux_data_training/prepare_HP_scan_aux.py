@@ -3,11 +3,17 @@
 import os
 import shutil
 import fileinput
+from ast import literal_eval
 
 ## Fill in Melloddy model best hyperparamters 
-hidden_sizes=1200
-epochs_lr_steps=(20,10)
-dropouts=0.8
+
+with open("00_best_hyperparameters.dat", "rt") as parameters:
+    parameters=literal_eval(parameters.read())    
+    
+hidden_sizes=parameters['hidden_sizes']
+epochs_lr_steps=parameters['epochs_lr_steps']
+dropouts=parameters['dropouts']
+
 ppv_npv_list = [0
        ,0.2
        ,0.4
