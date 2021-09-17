@@ -1,11 +1,14 @@
 #!/bin/bash
 
-mkdir -p ppv_npv_scan
-
 python prepare_HP_scan_aux.py
+python prepare_HP_scan_baseline.py
 
-for file in ppv_npv_scan/Run_*/
+for file in ppv_npv_scan*/Run_*/
 do
-	cp submit_aux.sh $file
+	cp submit.sh $file
 done
 
+for file in baseline_*/
+do
+	cp submit.sh $file
+done

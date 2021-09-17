@@ -1,13 +1,13 @@
 #!/bin/bash
 
-train='/home/rama.jabal/Melloddy/sparsechem/examples/chembl/train.py'
-data_path='/home/rama.jabal/Melloddy/aux_data/pseudolabel_auxdata/aux_data_preperation/baseline_plus_aux_data/matrices'
+train=$1
+data_path=$2
 
 # Hyperparameters to be changed - please do not edit the placeholders
-hidden_sizes='1200'
-dropout=0.8
-lr_steps=10
-epochs=20
+hidden_sizes=HIDDEN_SIZES
+dropout=DROPOUT
+lr_steps=LR_STEPS
+epochs=EPOCHS
 
 {
 tstart=`date +%s.%N`
@@ -18,7 +18,7 @@ python $train \
   --x $data_path/cls/cls_T11_x.npz \
   --y $data_path/cls/confidence_selection/cls_T10_y_baseline.npz \
   --folding $data_path/cls/cls_T11_fold_vector.npy \
-  --weights_class $data_path/cls/cls_weights.csv \
+  --weights_class $data_path/cls/cls_weights_0_1.csv \
   --hidden_sizes $hidden_sizes \
   --last_dropout $dropout \
   --middle_dropout $dropout \
