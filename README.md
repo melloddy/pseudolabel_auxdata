@@ -42,3 +42,11 @@ Step 3:
 5. Execute scripts in aux_data_predictions/
     - edit paths/envs in submit_baseline.sh and submit_aux.sh
 6. Run scripts_and_notebooks/step3_3_evaluation.ipynb
+
+Additional steps for trying different aux weights:
+1. Execute aux_data_preparation/02_generate_cls_weights.sh - this will generate different weight files
+2. Modify the best HPs in aux_data_training/00_best_hyperparameters.dat to be the same as in aux_data_training/03_run_sparsechem_baseline.sh
+3. Modify aux_data_training/submit.sh analogously to submit_aux.sh
+4. Run aux_data_training/01_setup_run_folders_aux.bash 
+5. Run aux_data_training/02_submit_all_aux.bash
+    - if you want to skip runs that were already done, modify the corresponding foldernames
