@@ -3,6 +3,7 @@
 import os
 import shutil
 import fileinput
+from ast import literal_eval
 
 ## Fill in Melloddy model best hyperparamters 
 
