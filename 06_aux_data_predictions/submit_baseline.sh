@@ -14,7 +14,7 @@
 predict_path=/home/rama.jabal/Melloddy/sparsechem/examples/chembl/predict.py
 
 # Full path to matrices, e.g.: /home/user/data_prep/out/run/matrices/
-data_path=/home/rama.jabal/Melloddy/aux_data/pseudolabel_auxdata/aux_data_preperation/baseline_plus_aux_data/matrices
+data_path=/home/rama.jabal/Melloddy/aux_data/pseudolabel_auxdata/04_aux_data_preperation/baseline_plus_aux_data/matrices
 if type srun > /dev/null 2>&1; then
     srun ./run_sparsechem_baseline.sh $predict_path $data_path
 else

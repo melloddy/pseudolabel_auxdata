@@ -8,8 +8,6 @@ hidden_sizes=HIDDEN_SIZES
 dropout=DROPOUT
 lr_steps=LR_STEPS
 epochs=EPOCHS
-ppv_npv=PPV_NPV
-weight=WEIGHT
 
 {
 tstart=`date +%s.%N`
@@ -18,9 +16,9 @@ echo $date1
 
 python $train \
   --x $data_path/cls/cls_T11_x.npz \
-  --y $data_path/cls/confidence_selection/cls_T10_y_ppv${ppv_npv}_npv${ppv_npv}.npz \
+  --y $data_path/cls/confidence_selection/cls_T10_y_baseline.npz \
   --folding $data_path/cls/cls_T11_fold_vector.npy \
-  --weights_class $data_path/cls/cls_weights_$weight.csv \
+  --weights_class $data_path/cls/cls_weights_0_1.csv \
   --hidden_sizes $hidden_sizes \
   --last_dropout $dropout \
   --middle_dropout $dropout \
@@ -37,8 +35,8 @@ python $train \
   --fold_va 2 \
   --fold_te 0 \
   --verbose 1 \
-  --save_model 0 \
-  --run_name classification_baseline_w_aux
+  --save_model 1 \
+  --run_name classification_baseline
 
 tend=`date +%s.%N`
 date2=`date`

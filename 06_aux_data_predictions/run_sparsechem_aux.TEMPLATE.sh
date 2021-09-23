@@ -6,7 +6,7 @@ data_path=$2
 run_num=RUN_NUM
 ppv_npv=PPV_NPV
 
-model_path=../../../aux_data_training/ppv_npv_scan/Run_${run_num}_ppv${ppv_npv}_npv${ppv_npv}/models
+model_path=../../../05_aux_data_training/ppv_npv_scan_1200_0_1/Run_${run_num}_ppv${ppv_npv}_npv${ppv_npv}/models
 
 mkdir -p preds
 

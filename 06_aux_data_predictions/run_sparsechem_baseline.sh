@@ -4,7 +4,7 @@ predict=$1
 data_path=$2
 
 
-model_path=../aux_data_training/models
+model_path=../05_aux_data_training/baseline/models
 
 mkdir -p preds_baseline
 
