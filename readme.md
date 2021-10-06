@@ -20,10 +20,10 @@ Prepare the following files: \
 
 1. Run scripts_and_notebooks/step2_1_ysparse_generation_main_quality_tasks_fold2.ipynb
 2. Use the best model identified in 1.3 to execute 03_image_predictions/01_main_tasks_fold2.
-    - you need to edit paths in image_predictions/main_tasks_fold2/01_link_files.bash and image_predictions/main_tasks_fold2/02_submit_predict.sh
+    - you need to edit paths in 03_image_predictions/01_main_tasks_fold2/01_link_files.bash and image_predictions/main_tasks_fold2/02_submit_predict.sh
 3. Run scripts_and_notebooks/step2_2_CPfitting.ipynb, step2_3_taskstats.ipynb and step2_4_ysparse_inference.ipynb
 4. Execute scripts in 03_image_predictions/02_all_cmpds
-    - you might need to edit paths in image_predictions/all_cmpds/01_link_files.bash and image_predictions/all_cmpds/02_submit_predict.sh
+    - you might need to edit paths in 03_image_predictions/02_all_cmpds/01_link_files.bash and 03_image_predictions/02_all_cmpds/02_submit_predict.sh
 5. Run scripts_and_notebooks/step2_5_CPapplication_auxdata.ipynb
     - it refers to T2_images.csv, this file is described in the beginning of the readme. It contain all image compounds, not only ones in MELLODDY
 6. Run scripts_and_notebooks/step2_6_Tfilegeneration.ipynb
