@@ -3,7 +3,6 @@ cp
 files
 images*
 *@eaDir
-.*
 *.csv
 HP_scan*
 images
@@ -19,3 +18,5 @@ models*
 baseline_plus_aux_data*
 results*
 baseline*
+.pytest_cache
+__pycache__/
