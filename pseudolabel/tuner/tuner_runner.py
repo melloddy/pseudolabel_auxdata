@@ -1,10 +1,11 @@
 import copy
+import multiprocessing
 import os
 
-from pseudolabel import utils
+from melloddy_tuner.tunercli import do_prepare_training, prepare
 
-from melloddy_tuner.tunercli import prepare, do_prepare_training
-import multiprocessing
+from pseudolabel import utils
+from pseudolabel.constants import TUNER_MODEL_NAME
 
 
 def run_tuner(
@@ -29,7 +30,7 @@ def run_tuner(
 
     os.makedirs(output_dir, exist_ok=True)
     args.output_dir = output_dir
-    args.run_name = "image_model"
+    args.run_name = TUNER_MODEL_NAME
     args.tag = "cls"
     args.folding_method = "scaffold"
     args.number_cpu = n_cpu

@@ -3,8 +3,8 @@ repos:
     hooks:
       - id: black
         name: Black
-        entry: poetry run task pc-black
-        pass_filenames: true
+        entry: poetry run task black
+        pass_filenames: false
         types: [file, json, python]
         language: system
 
@@ -12,8 +12,8 @@ repos:
     hooks:
       - id: linter
         name: Flake8
-        entry: poetry run task pc-linter
-        pass_filenames: true
+        entry: poetry run task linter
+        pass_filenames: false
         types: [file, python]
         language: system
 
@@ -21,8 +21,8 @@ repos:
     hooks:
       - id: isort
         name: isort
-        entry: poetry run task pc-isort
-        pass_filenames: true
+        entry: poetry run task isort
+        pass_filenames: false
         types: [file, python]
         language: system
 
@@ -30,8 +30,8 @@ repos:
     hooks:
       - id: mypy
         name: MyPy
-        entry: poetry run task pc-mypy
-        pass_filenames: true
+        entry: poetry run task mypy
+        pass_filenames: false
         types: [file, python]
         language: system
 

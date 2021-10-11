@@ -71,7 +71,7 @@ def synchronize_thresholds(
         os.path.join(tuner_input_images, "T0_synchedthreshold.csv"), index=False
     )
 
-    iais_in_scope = set(t0_out["input_assay_id"])
+    iais_in_scope = set(t0_out["input_assay_id"])  # noqa
     t1_path = os.path.join(tuner_input_images, "T1.csv")
     t1 = pd.read_csv(t1_path)
     t1_synchedthreshold = t1.query("input_assay_id in @iais_in_scope")
@@ -79,7 +79,7 @@ def synchronize_thresholds(
         os.path.join(tuner_input_images, "T1_synchedthreshold.csv"), index=False
     )
 
-    icis = set(t1_synchedthreshold["input_compound_id"])
+    icis = set(t1_synchedthreshold["input_compound_id"])  # noqa
     t2_path = os.path.join(tuner_input_images, "T2.csv")
     t2 = pd.read_csv(t2_path)
     t2.query("input_compound_id in @icis").to_csv(

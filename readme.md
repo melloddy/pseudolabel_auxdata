@@ -10,7 +10,7 @@ Prepare the following files: \
     - 01_T_generation_images.sh will generate T0, T1, T2 files for image compounds that exist also in Melloddy data with their corresponding tasks.
     - 02_preprocessing_synchronized_thresholds.ipynb will modify T0-2 files to align thresholds with your original melloddy tuner run.
     - 03_run_melloddy_tuner.sh executes melloddy tuner on image only data, using updated T0-2.
-    - 04_generating_x_image_features.ipynb creates an analog of X matrix with image features instead of ECFP.  
+    - 04_generating_x_image_features.ipynb creates an analog of X matrix with image features instead of ECFP.
 2. Run scirpts in  02_image_model_training/ :
     - Update submit.sh file in 02_image_model_training/
     - Execute 01_setup_run_folders.bash and 02_submit_all.bash. This will initiate HP scan.
