@@ -11,7 +11,7 @@ def data_folder() -> str:
 
 
 @fixture(scope="session")
-def images_folder(data_folder) -> str:
+def output_folder(data_folder) -> str:
     return os.path.join(data_folder, "output")
 
 
@@ -21,7 +21,7 @@ def params_folder(data_folder) -> str:
 
 
 @fixture(scope="session")
-def config(data_folder, params_folder) -> PseudolabelConfig:
+def config(data_folder, params_folder, output_folder) -> PseudolabelConfig:
     melloddy_path = os.path.join(data_folder, "Melloddy")
 
     return PseudolabelConfig(
@@ -34,11 +34,13 @@ def config(data_folder, params_folder) -> PseudolabelConfig:
         key_json=os.path.join(params_folder, "key.json"),
         parameters_json=os.path.join(params_folder, "parameters.json"),
         ref_hash_json=os.path.join(params_folder, "ref_hash.json"),
+        output_folder_path=output_folder,
+        sparsechem_path="/home/robin/dev/iktos/mellody/wp2/sparsechem"
     )
 
 
 @fixture(scope="session")
 def tuner_images_output_folder():
     return (
-        "/home/robin/dev/iktos/mellody/wp1/pseudolabel_auxdata/data/output/tuner_images"
+        "/home/robin/dev/iktos/mellody/wp1/pseudolabel_auxdata/data/output"
     )

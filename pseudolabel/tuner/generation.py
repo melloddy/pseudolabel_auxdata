@@ -8,6 +8,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def find_overlap_with_melloddy(
+    *,
     t0_melloddy_path: str,
     t1_melloddy_path: str,
     t2_images_path: str,
