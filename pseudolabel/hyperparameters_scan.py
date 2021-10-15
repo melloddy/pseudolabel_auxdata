@@ -15,7 +15,7 @@ def run_hyperopt(
     hidden_sizes: List[str],
     dropouts: List[float],
     hp_output_dir: str,
-    sparsechem_path: str,
+    sparsechem_trainer_path: str,
     tuner_output_dir: str,
     show_progress: bool = True,
 ):
@@ -46,9 +46,6 @@ def run_hyperopt(
 
                 current_model_dir = os.path.join(hp_output_dir, run_name)
                 os.makedirs(current_model_dir, exist_ok=True)
-                sparsechem_train_script = os.path.join(
-                    sparsechem_path, "examples", "chembl", "train.py"
-                )
 
                 log_file = os.path.join(current_model_dir, "log.txt")
                 err_file = os.path.join(current_model_dir, "error.txt")
@@ -60,7 +57,7 @@ def run_hyperopt(
                     subprocess.run(
                         [
                             "python",
-                            sparsechem_train_script,
+                            sparsechem_trainer_path,
                             "--x",
                             os.path.join(
                                 tuner_output_dir,
@@ -122,6 +119,8 @@ def run_hyperopt(
                             "1",
                             "--run_name",
                             IMAGE_MODEL_NAME,
+                            "--output_dir",
+                            current_model_dir
                         ],
                         check=True,
                         stdout=open(log_file, "w"),

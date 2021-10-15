@@ -1,3 +1,4 @@
+import multiprocessing
 import os
 from dataclasses import dataclass, field
 from typing import List, Tuple
@@ -30,6 +31,8 @@ class PseudolabelConfig:
 
     output_folder_path: str
 
+    max_cpu: int = multiprocessing.cpu_count() - 1
+
     imagemodel_hidden_size: List[str] = field(default_factory=DEFAULT_HIDDEN_SIZES)
     imagemodel_epoch_lr_steps: List[Tuple[int, int]] = field(
         default_factory=DEFAULT_EPOCH_LR_STEPS
@@ -47,6 +50,23 @@ class PseudolabelConfig:
     def hyperopt_output_folder(self) -> str:
         path = os.path.join(self.output_folder_path, "hyperopt")
         return path
+
+    @property
+    def intermediate_files_folder(self) -> str:
+        path = os.path.join(self.output_folder_path, "intermediate")
+        return path
+
+    @property
+    def log_dir(self) -> str:
+        return os.path.join(self.output_folder_path, "logs")
+
+    @property
+    def sparsechem_trainer_path(self) -> str:
+        return os.path.join(self.sparsechem_path, "examples", "chembl", "train.py")
+
+    @property
+    def sparsechem_predictor_path(self) -> str:
+        return os.path.join(self.sparsechem_path, "examples", "chembl", "predict.py")
 
     def __check_files_exist(self):
         utils.check_file_exists(self.t0_melloddy_path)

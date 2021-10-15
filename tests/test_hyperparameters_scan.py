@@ -7,7 +7,7 @@ def test_run_hyperopt(config):
         hidden_sizes=config.imagemodel_hidden_size,
         dropouts=config.imagemodel_dropouts,
         hp_output_dir=config.hyperopt_output_folder,
-        sparsechem_path=config.sparsechem_path,
+        sparsechem_trainer_path=config.sparsechem_trainer_path,
         tuner_output_dir=config.tuner_output_folder,
         show_progress=config.show_progress,
     )
