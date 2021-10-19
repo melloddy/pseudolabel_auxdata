@@ -5,12 +5,12 @@ import pandas as pd
 from tqdm import tqdm
 import os
 from pseudolabel.cp_utils import prob_ncm, micp, cp_label_predictor
+import matplotlib.pyplot as plt
 
 
 def splitting_data(
-    tuner_output_images: str, intermediate_files_folder: str, fold_va: int = 2
+        tuner_output_images: str, intermediate_files_folder: str, fold_va: int = 2
 ):
-
     path_labels = os.path.join(
         intermediate_files_folder, "y_sparse_step1_main_tasks_fold2.npy"
     )
@@ -30,8 +30,8 @@ def splitting_data(
     sn_fold2 = sn.query("fold_id == @fold_va")
     sn_scaffolds = (
         sn_fold2.groupby(by="sn_smiles")
-        .count()["input_compound_id"]
-        .sort_values(ascending=False)
+            .count()["input_compound_id"]
+            .sort_values(ascending=False)
     )
 
     sn_map = sn_scaffolds.reset_index().drop(columns="input_compound_id")
@@ -75,7 +75,7 @@ def splitting_data(
 
 
 def fit_cp(
-    preds_fva, labels, cdvi_fit, cdvi_eval, analysis_folder: str, eps: float = 0.05
+        preds_fva, labels, cdvi_fit, cdvi_eval, analysis_folder: str, eps: float = 0.05
 ):
     e_inacts = []
     e_acts = []
@@ -156,19 +156,19 @@ def fit_cp(
 
             # literature validity
             literature_validity_inact = (
-                np.sum(
-                    np.array(cp_test)[idx_inact_certain]
-                    == labels_fte_col[idx_inact_certain].astype(str)
-                )
-                + len(idx_inact_both)
-            ) / len(idx_inact)
+                                                np.sum(
+                                                    np.array(cp_test)[idx_inact_certain]
+                                                    == labels_fte_col[idx_inact_certain].astype(str)
+                                                )
+                                                + len(idx_inact_both)
+                                        ) / len(idx_inact)
             literature_validity_act = (
-                np.sum(
-                    np.array(cp_test)[idx_act_certain]
-                    == labels_fte_col[idx_act_certain].astype(str)
-                )
-                + len(idx_act_both)
-            ) / len(idx_act)
+                                              np.sum(
+                                                  np.array(cp_test)[idx_act_certain]
+                                                  == labels_fte_col[idx_act_certain].astype(str)
+                                              )
+                                              + len(idx_act_both)
+                                      ) / len(idx_act)
 
             uni = np.unique(cp_test)
 
@@ -208,3 +208,34 @@ def fit_cp(
         }
     )
     df.to_csv(os.path.join(cp_analysis_folder, f"summary_eps_{eps}.csv"), index=False)
+
+
+def generate_task_stats(analysis_folder: str):
+    path = os.path.join(analysis_folder, "cp/summary_eps_0.05.csv")
+    df = pd.read_csv(path)
+    lst = [0, 0.2, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.99]
+    arr = np.zeros([len(lst), len(lst)], dtype=int)
+
+    for i, l1 in enumerate(lst):
+        for j, l2 in enumerate(lst):
+            arr[i, j] = len(df.query("validity_0 > @l1").query("validity_1 > @l2"))
+
+    np.save(os.path.join(analysis_folder, "cp/task_stats.npy"), arr)
+
+    fig, ax = plt.subplots()
+    # Using matshow here just because it sets the ticks up nicely. imshow is faster.
+    ax.matshow(arr)
+
+    for (i, j), z in np.ndenumerate(arr):
+        ax.text(j, i, '{:0.1f}'.format(z), ha='center', va='center')
+
+    xaxis = np.arange(len(lst))
+    ax.set_xticks(xaxis)
+    ax.set_yticks(xaxis)
+    ax.set_xticklabels(lst)
+    ax.set_yticklabels(lst)
+    plt.xlabel("threshold_1")
+    plt.ylabel("threshold_0")
+    plt.title('Number of tasks with different inactive and active validity', fontdict={'fontsize': 9})
+
+    plt.savefig(os.path.join(analysis_folder, "cp/task_stats.png"))

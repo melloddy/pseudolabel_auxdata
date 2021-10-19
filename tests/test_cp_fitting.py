@@ -1,6 +1,6 @@
 import os
 
-from pseudolabel.cp_fitting import splitting_data, fit_cp
+from pseudolabel.cp_fitting import splitting_data, fit_cp, generate_task_stats
 from pseudolabel.pseudolabel_config import PseudolabelConfig
 
 
@@ -20,3 +20,8 @@ def test_split_and_fit_cp(config: PseudolabelConfig):
         cdvi_eval=cdvi_eval,
         analysis_folder=config.analysis_folder,
     )
+
+
+def test_generate_task_stats(config: PseudolabelConfig):
+    generate_task_stats(config.analysis_folder)
+

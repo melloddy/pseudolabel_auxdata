@@ -3,7 +3,7 @@ import logging
 from pseudolabel import hyperparameters_scan, predict_images_fold2
 from pseudolabel.pseudolabel_config import PseudolabelConfig
 from pseudolabel.tuner import generation, tuner_tools
-from pseudolabel.cp_fitting import splitting_data, fit_cp
+from pseudolabel.cp_fitting import splitting_data, fit_cp, generate_task_stats
 
 LOGGER = logging.getLogger(__name__)
 
@@ -84,3 +84,7 @@ def run_full_pipe(config: PseudolabelConfig):
         cdvi_eval=cdvi_eval,
         analysis_folder=config.analysis_folder,
     )
+
+    LOGGER.info("Saving task stats on pseudolabels")
+
+    generate_task_stats(config.analysis_folder)
