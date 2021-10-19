@@ -242,3 +242,90 @@ def generate_task_stats(analysis_folder: str):
     )
 
     plt.savefig(os.path.join(analysis_folder, "cp/task_stats.png"))
+
+
+def apply_cp_aux(
+    analysis_folder: str,
+    t2_images_path: str,
+    intermediate_files: str,
+    eps: float = 0.05,
+):
+
+    path_preds_all_cmpds = os.path.join(
+        intermediate_files, "pred_cpmodel_step2_inference_allcmpds-class.npy"
+    )
+    preds = np.load(path_preds_all_cmpds, allow_pickle=True).item()
+
+    with open(os.path.join(analysis_folder, "cp/labels_fva_dict.json")) as fp:
+        labels_fva_dict = json.load(fp)
+    with open(os.path.join(analysis_folder, "cp/ncms_fva_fit_dict.json")) as fp:
+        ncms_fva_fit_dict = json.load(fp)
+
+    cols = list(np.unique(preds.nonzero()[1]))
+
+    indxs = []
+    n_active_preds = []
+    n_inactive_preds = []
+    n_uncertain_preds = []
+    cp_values = {}
+
+    for col in tqdm(cols):
+        ncms_fva_col = np.array(ncms_fva_fit_dict[str(col)])
+        labels_fva_col = np.array(labels_fva_dict[str(col)])
+
+        preds_all_col = preds[:, col].data
+
+        ncms_all_0 = prob_ncm(preds_all_col, np.repeat(0.0, len(preds_all_col)))
+        ncms_all_1 = prob_ncm(preds_all_col, np.repeat(1.0, len(preds_all_col)))
+
+        p0, p1 = micp(
+            ncms_fva_col, labels_fva_col, ncms_all_0, ncms_all_1, randomized=False
+        )
+        cp_all = [cp_label_predictor(pe0, pe1, eps) for pe0, pe1 in zip(p0, p1)]
+
+        cp_values[col] = cp_all
+
+        indxs.append(col)
+        n_active_preds.append(np.array([e == 1 for e in cp_values[col]]).sum())
+        n_inactive_preds.append(np.array([e == 0 for e in cp_values[col]]).sum())
+        n_uncertain_preds.append(
+            np.array([e == "uncertain both" for e in cp_values[col]]).sum()
+        )
+
+    df_stats = pd.DataFrame(
+        {
+            "n_active_pred": n_active_preds,
+            "n_inactive_pred": n_inactive_preds,
+            "n_uncertain_pred": n_uncertain_preds,
+            "col_indx": indxs,
+        }
+    )
+
+    tasks_for_aux = df_stats.query("n_active_pred>0 and n_inactive_pred>0")["col_indx"]
+
+    input_compound_ids = pd.read_csv(t2_images_path, usecols=["input_compound_id"])
+
+    arrs = []
+    for task in tqdm(tasks_for_aux):
+        arrs.append(
+            pd.DataFrame(
+                {
+                    "standard_value": cp_values[task],
+                    "input_compound_id": input_compound_ids,
+                    "standard_qualifier": "=",
+                    "input_assay_id": task,
+                }
+            ).query("standard_value == 0 or standard_value == 1")
+        )
+
+    arr = pd.concat(arrs)
+    image_pseudolabel_aux_nolabels = os.path.join(
+        intermediate_files, "image_pseudolabel_aux_nolabels"
+    )
+    os.makedirs(image_pseudolabel_aux_nolabels, exist_ok=True)
+    arr.to_csv(
+        os.path.join(
+            image_pseudolabel_aux_nolabels, "T1_image_pseudolabel_aux_nolabels.csv"
+        ),
+        index=False,
+    )

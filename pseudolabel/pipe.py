@@ -112,3 +112,11 @@ def run_full_pipe(config: PseudolabelConfig):
         intermediate_files_folder=config.intermediate_files_folder,
         logs_dir=config.log_dir,
     )
+
+    LOGGER.info("Apply conformal predictors on all images predictions")
+
+    cp_fitting.apply_cp_aux(
+        analysis_folder=config.analysis_folder,
+        t2_images_path=config.t2_images_path,
+        intermediate_files=config.intermediate_files_folder,
+    )
