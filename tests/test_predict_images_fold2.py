@@ -1,11 +1,11 @@
 import os.path
 
-from pseudolabel import predict_images_filter
+from pseudolabel import predict_images_fold2
 from pseudolabel.constants import IMAGE_MODEL_NAME
 
 
 def test_find_best_model(config):
-    best_model = predict_images_filter.find_best_model(
+    best_model = predict_images_fold2.find_best_model(
         hyperopt_folder=config.hyperopt_output_folder,
     )
 
@@ -13,7 +13,7 @@ def test_find_best_model(config):
 
 
 def test_create_ysparse_fold2(config):
-    predict_images_filter.create_ysparse_fold2(
+    predict_images_fold2.create_ysparse_fold2(
         tuner_output_images=config.tuner_output_folder,
         intermediate_files_folder=config.intermediate_files_folder,
     )
@@ -29,11 +29,11 @@ def test_create_ysparse_fold2(config):
 
 
 def test_find_best_model_and_run_sparsechem(config):
-    best_model = predict_images_filter.find_best_model(
+    best_model = predict_images_fold2.find_best_model(
         hyperopt_folder=config.hyperopt_output_folder,
     )
 
-    predict_images_filter.run_sparsechem(
+    predict_images_fold2.run_sparsechem_predict(
         sparsechem_predictor_path=config.sparsechem_predictor_path,
         tuner_output_dir=config.tuner_output_folder,
         best_model=best_model,

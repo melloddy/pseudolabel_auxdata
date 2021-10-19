@@ -50,6 +50,7 @@ def run_hyperopt(
                 log_file = os.path.join(current_model_dir, "log.txt")
                 err_file = os.path.join(current_model_dir, "error.txt")
                 # TODO Check best way to call subprocess
+                # TODO Add all arguments of sparsechem
                 try:
                     LOGGER.info(
                         f"Running HyperOpt with Hidden={hidden} Dropout={dropout} EpochLRStep={epoch_lr_step}"
@@ -120,7 +121,7 @@ def run_hyperopt(
                             "--run_name",
                             IMAGE_MODEL_NAME,
                             "--output_dir",
-                            current_model_dir
+                            current_model_dir,
                         ],
                         check=True,
                         stdout=open(log_file, "w"),

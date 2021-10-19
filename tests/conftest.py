@@ -7,7 +7,7 @@ from pseudolabel.pseudolabel_config import PseudolabelConfig
 
 @fixture(scope="session")
 def data_folder() -> str:
-    return "/home/robin/dev/iktos/mellody/wp1/pseudolabel_auxdata/data/"
+    return "/Users/tmp2/Desktop/iktos/pseudolabel_auxdata/data/"
 
 
 @fixture(scope="session")
@@ -35,12 +35,10 @@ def config(data_folder, params_folder, output_folder) -> PseudolabelConfig:
         parameters_json=os.path.join(params_folder, "parameters.json"),
         ref_hash_json=os.path.join(params_folder, "ref_hash.json"),
         output_folder_path=output_folder,
-        sparsechem_path="/home/robin/dev/iktos/mellody/wp2/sparsechem"
+        sparsechem_path="/Users/tmp2/Desktop/iktos/sparsechem",
     )
 
 
 @fixture(scope="session")
 def tuner_images_output_folder():
-    return (
-        "/home/robin/dev/iktos/mellody/wp1/pseudolabel_auxdata/data/output"
-    )
+    return "/Users/tmp2/Desktop/iktos/pseudolabel_auxdata/data/output"

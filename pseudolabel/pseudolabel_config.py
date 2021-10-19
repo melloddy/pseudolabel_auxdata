@@ -61,6 +61,11 @@ class PseudolabelConfig:
         return os.path.join(self.output_folder_path, "logs")
 
     @property
+    def analysis_folder(self) -> str:
+        path = os.path.join(self.output_folder_path, "analysis")
+        return path
+
+    @property
     def sparsechem_trainer_path(self) -> str:
         return os.path.join(self.sparsechem_path, "examples", "chembl", "train.py")
 

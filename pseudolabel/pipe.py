@@ -1,8 +1,9 @@
 import logging
 
-from pseudolabel import hyperparameters_scan, predict_images_filter
+from pseudolabel import hyperparameters_scan, predict_images_fold2
 from pseudolabel.pseudolabel_config import PseudolabelConfig
 from pseudolabel.tuner import generation, tuner_tools
+from pseudolabel.cp_fitting import splitting_data, fit_cp
 
 LOGGER = logging.getLogger(__name__)
 
@@ -28,7 +29,7 @@ def run_full_pipe(config: PseudolabelConfig):
         json_params=config.parameters_json,
         json_key=config.key_json,
         json_ref_hash=config.ref_hash_json,
-        output_dir=config.tuner_output_folder,
+        output_dir=config.output_folder_path,
         n_cpu=config.max_cpu,
     )
     tuner_tools.process_tuner_output(
@@ -50,20 +51,36 @@ def run_full_pipe(config: PseudolabelConfig):
     LOGGER.info(
         "Selecting best hyperparameter and generating y sparse fold2 for inference"
     )
-    best_model = predict_images_filter.find_best_model(
+    best_model = predict_images_fold2.find_best_model(
         hyperopt_folder=config.hyperopt_output_folder
     )
-    predict_images_filter.create_ysparse_fold2(
+    predict_images_fold2.create_ysparse_fold2(
         tuner_output_images=config.tuner_output_folder,
         intermediate_files_folder=config.intermediate_files_folder,
     )
 
     LOGGER.info("Predict images fold 2 for fitting conformal predictors")
 
-    predict_images_filter.run_sparsechem(
+    predict_images_fold2.run_sparsechem_predict(
         sparsechem_predictor_path=config.sparsechem_predictor_path,
         tuner_output_dir=config.tuner_output_folder,
         best_model=best_model,
         intermediate_files_folder=config.intermediate_files_folder,
         logs_dir=config.log_dir,
+    )
+
+    LOGGER.info("Splitting data for conformal predictors training")
+
+    preds_fva, labels, cdvi_fit, cdvi_eval = splitting_data(
+        config.tuner_output_folder, config.intermediate_files_folder
+    )
+
+    LOGGER.info("Fitting conformal predictors ")
+
+    fit_cp(
+        preds_fva=preds_fva,
+        labels=labels,
+        cdvi_fit=cdvi_fit,
+        cdvi_eval=cdvi_eval,
+        analysis_folder=config.analysis_folder,
     )

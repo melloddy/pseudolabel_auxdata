@@ -127,7 +127,7 @@ def create_ysparse_fold2(tuner_output_images: str, intermediate_files_folder: st
     np.save(filename, csr_matrix(out))
 
 
-def run_sparsechem(
+def run_sparsechem_predict(
     sparsechem_predictor_path: str,
     tuner_output_dir: str,
     best_model: str,
