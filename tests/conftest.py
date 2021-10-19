@@ -36,6 +36,7 @@ def config(data_folder, params_folder, output_folder) -> PseudolabelConfig:
         ref_hash_json=os.path.join(params_folder, "ref_hash.json"),
         output_folder_path=output_folder,
         sparsechem_path="/Users/tmp2/Desktop/iktos/sparsechem",
+        dataloader_num_workers=0,
     )
 
 

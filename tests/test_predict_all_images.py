@@ -23,4 +23,6 @@ def test_run_sparsechem_predict(config: PseudolabelConfig):
         best_model=best_model,
         intermediate_files_folder=config.intermediate_files_folder,
         logs_dir=config.log_dir,
+        torch_device=config.torch_device,
+        dataloader_num_workers=config.dataloader_num_workers,
     )

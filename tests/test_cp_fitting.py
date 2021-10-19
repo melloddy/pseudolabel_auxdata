@@ -1,3 +1,5 @@
+import os
+
 from pseudolabel.cp_fitting import (
     splitting_data,
     fit_cp,

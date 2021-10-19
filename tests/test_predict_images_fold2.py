@@ -1,5 +1,8 @@
 import os.path
 
+import torch
+
+
 from pseudolabel import predict_images_fold2
 from pseudolabel.constants import IMAGE_MODEL_NAME
 
@@ -29,6 +32,8 @@ def test_create_ysparse_fold2(config):
 
 
 def test_find_best_model_and_run_sparsechem(config):
+    torch.multiprocessing.freeze_support()
+
     best_model = predict_images_fold2.find_best_model(
         hyperopt_folder=config.hyperopt_output_folder,
     )
@@ -39,4 +44,10 @@ def test_find_best_model_and_run_sparsechem(config):
         best_model=best_model,
         intermediate_files_folder=config.intermediate_files_folder,
         logs_dir=config.log_dir,
+        torch_device=config.torch_device,
+        dataloader_num_workers=config.dataloader_num_workers,
+    )
+
+    assert os.path.exists(
+        os.path.join(config.intermediate_files_folder, "pred_images_fold2-class.npy")
     )

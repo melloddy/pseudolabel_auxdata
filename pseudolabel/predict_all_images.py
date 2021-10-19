@@ -60,6 +60,8 @@ def run_sparsechem_predict(
     sparsechem_predictor_path: str,
     best_model: str,
     intermediate_files_folder: str,
+    dataloader_num_workers: int,
+    torch_device: str,
     logs_dir: Optional[str] = None,
 ):
     x_path = os.path.join(
@@ -87,6 +89,10 @@ def run_sparsechem_predict(
             os.path.join(
                 intermediate_files_folder, "pred_cpmodel_step2_inference_allcmpds"
             ),
+            "--dev",
+            torch_device,
+            "--num_workers",
+            str(dataloader_num_workers),
         ],
         check=True,
         stdout=open(

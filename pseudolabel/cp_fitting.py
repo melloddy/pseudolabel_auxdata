@@ -311,7 +311,7 @@ def apply_cp_aux(
             pd.DataFrame(
                 {
                     "standard_value": cp_values[task],
-                    "input_compound_id": input_compound_ids,
+                    "input_compound_id": input_compound_ids["input_compound_id"].values,
                     "standard_qualifier": "=",
                     "input_assay_id": task,
                 }

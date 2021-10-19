@@ -2,6 +2,7 @@ import multiprocessing
 import os
 from dataclasses import dataclass, field
 from typing import List, Tuple
+import torch
 
 import pandas as pd
 
@@ -32,6 +33,9 @@ class PseudolabelConfig:
     output_folder_path: str
 
     max_cpu: int = multiprocessing.cpu_count() - 1
+    # TODO add in doc that value should be set to 0 on mac
+    dataloader_num_workers: int = multiprocessing.cpu_count() - 1
+    torch_device: str = "cuda" if torch.cuda.is_available() else "cpu"
 
     imagemodel_hidden_size: List[str] = field(default_factory=DEFAULT_HIDDEN_SIZES)
     imagemodel_epoch_lr_steps: List[Tuple[int, int]] = field(

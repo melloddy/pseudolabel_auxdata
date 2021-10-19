@@ -4,6 +4,7 @@ import logging
 import os
 import os.path
 import subprocess
+import sys
 import types
 from typing import Optional
 
@@ -132,6 +133,8 @@ def run_sparsechem_predict(
     tuner_output_dir: str,
     best_model: str,
     intermediate_files_folder: str,
+    dataloader_num_workers: int,
+    torch_device: str,
     logs_dir: Optional[str] = None,
 ):
     x_path = os.path.join(tuner_output_dir, "matrices", "cls", "cls_T11_x_features.npz")
@@ -155,6 +158,10 @@ def run_sparsechem_predict(
             os.path.join(best_model, f"{IMAGE_MODEL_NAME}.pt"),
             "--outprefix",
             os.path.join(intermediate_files_folder, "pred_images_fold2"),
+            "--dev",
+            torch_device,
+            "--num_workers",
+            str(dataloader_num_workers),
         ],
         check=True,
         stdout=open(os.path.join(logs_dir, "predict_images_fold2_log.txt"), "w")
