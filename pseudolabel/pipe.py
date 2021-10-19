@@ -5,6 +5,7 @@ from pseudolabel import (
     predict_images_fold2,
     cp_fitting,
     predict_all_images,
+    t_pseudolabels_generation,
 )
 from pseudolabel.pseudolabel_config import PseudolabelConfig
 from pseudolabel.tuner import generation, tuner_tools
@@ -119,4 +120,12 @@ def run_full_pipe(config: PseudolabelConfig):
         analysis_folder=config.analysis_folder,
         t2_images_path=config.t2_images_path,
         intermediate_files=config.intermediate_files_folder,
+    )
+
+    LOGGER.info("Creating T files for pseudolabels auxiliary tasks")
+
+    t_pseudolabels_generation.generate_t_aux_pl(
+        intermediate_files_folder=config.intermediate_files_folder,
+        t0_melloddy_path=config.t0_melloddy_path,
+        t2_images_path=config.t2_images_path,
     )
