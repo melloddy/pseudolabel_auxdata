@@ -24,4 +24,3 @@ def test_split_and_fit_cp(config: PseudolabelConfig):
 
 def test_generate_task_stats(config: PseudolabelConfig):
     generate_task_stats(config.analysis_folder)
-

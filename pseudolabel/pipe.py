@@ -1,9 +1,13 @@
 import logging
 
-from pseudolabel import hyperparameters_scan, predict_images_fold2
+from pseudolabel import (
+    hyperparameters_scan,
+    predict_images_fold2,
+    cp_fitting,
+    predict_all_images,
+)
 from pseudolabel.pseudolabel_config import PseudolabelConfig
 from pseudolabel.tuner import generation, tuner_tools
-from pseudolabel.cp_fitting import splitting_data, fit_cp, generate_task_stats
 
 LOGGER = logging.getLogger(__name__)
 
@@ -71,13 +75,14 @@ def run_full_pipe(config: PseudolabelConfig):
 
     LOGGER.info("Splitting data for conformal predictors training")
 
-    preds_fva, labels, cdvi_fit, cdvi_eval = splitting_data(
-        config.tuner_output_folder, config.intermediate_files_folder
+    preds_fva, labels, cdvi_fit, cdvi_eval = cp_fitting.splitting_data(
+        tuner_output_images=config.tuner_output_folder,
+        intermediate_files_folder=config.intermediate_files_folder,
     )
 
     LOGGER.info("Fitting conformal predictors ")
 
-    fit_cp(
+    cp_fitting.fit_cp(
         preds_fva=preds_fva,
         labels=labels,
         cdvi_fit=cdvi_fit,
@@ -87,4 +92,23 @@ def run_full_pipe(config: PseudolabelConfig):
 
     LOGGER.info("Saving task stats on pseudolabels")
 
-    generate_task_stats(config.analysis_folder)
+    cp_fitting.generate_task_stats(analysis_folder=config.analysis_folder)
+
+    LOGGER.info(
+        "Generating x and y sparse for all images on selected tasks for inference"
+    )
+    predict_all_images.create_x_ysparse_all_images(
+        tuner_output_image=config.tuner_output_folder,
+        t_images_features_path=config.t_images_features_path,
+        analysis_folder=config.analysis_folder,
+        intermediate_files_folder=config.intermediate_files_folder,
+    )
+
+    LOGGER.info("Generating predictions on all image compounds")
+
+    predict_all_images.run_sparsechem_predict(
+        sparsechem_predictor_path=config.sparsechem_predictor_path,
+        best_model=best_model,
+        intermediate_files_folder=config.intermediate_files_folder,
+        logs_dir=config.log_dir,
+    )
