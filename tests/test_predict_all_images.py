@@ -8,7 +8,7 @@ from pseudolabel.predict_images_fold2 import find_best_model
 
 def test_create_x_ysparse_all_images(config: PseudolabelConfig):
     create_x_ysparse_all_images(
-        tuner_output_image=config.tuner_output_folder,
+        tuner_output_image=config.tuner_output_folder_image,
         t_images_features_path=config.t_images_features_path,
         analysis_folder=config.analysis_folder,
         intermediate_files_folder=config.intermediate_files_folder,

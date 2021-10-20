@@ -3,15 +3,14 @@ import os.path
 from pseudolabel.tuner import generation
 
 
-def test_filter_data_by_id(output_folder):
-    input_folder = "../../data/Melloddy"
+def test_filter_data_by_id(config):
     generation.find_overlap_with_melloddy(
-        t0_melloddy_path=os.path.join(input_folder, "T0.csv"),
-        t1_melloddy_path=os.path.join(input_folder, "T1.csv"),
-        t2_images_path=os.path.join(input_folder, "..", "T2_images.csv"),
-        output_folder=output_folder,
+        t0_melloddy_path=config.t0_melloddy_path,
+        t1_melloddy_path=config.t1_melloddy_path,
+        t2_images_path=config.t2_images_path,
+        output_folder=config.output_folder_path,
     )
 
     generation.synchronize_thresholds(
-        os.path.join("../../data/T8c.csv"), tuner_input_images=output_folder
+        config.t8c_baseline, tuner_input_images=config.output_folder_path
     )

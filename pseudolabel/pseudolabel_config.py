@@ -22,7 +22,6 @@ class PseudolabelConfig:
     t2_melloddy_path: str
     t2_images_path: str
     t_images_features_path: str
-    t8c: str
 
     key_json: str
     parameters_json: str
@@ -30,6 +29,7 @@ class PseudolabelConfig:
 
     sparsechem_path: str
 
+    tuner_output_folder_baseline: str
     output_folder_path: str
 
     max_cpu: int = multiprocessing.cpu_count() - 1
@@ -46,7 +46,17 @@ class PseudolabelConfig:
     show_progress: bool = True
 
     @property
-    def tuner_output_folder(self) -> str:
+    def t8c_baseline(self) -> str:
+        path = os.path.join(
+            self.tuner_output_folder_baseline,
+            "results_tmp",
+            "classification",
+            "T8c.csv",
+        )
+        return path
+
+    @property
+    def tuner_output_folder_image(self) -> str:
         path = os.path.join(self.output_folder_path, IMAGE_MODEL_NAME)
         return path
 
@@ -70,6 +80,11 @@ class PseudolabelConfig:
         return path
 
     @property
+    def output_pseudolabel_folder(self) -> str:
+        path = os.path.join(self.output_folder_path, "pseudolabels")
+        return path
+
+    @property
     def sparsechem_trainer_path(self) -> str:
         return os.path.join(self.sparsechem_path, "examples", "chembl", "train.py")
 
@@ -85,7 +100,7 @@ class PseudolabelConfig:
         utils.check_file_exists(self.t2_images_path)
         utils.check_file_exists(self.t_images_features_path)
 
-        utils.check_file_exists(self.t8c)
+        utils.check_file_exists(self.t8c_baseline)
 
         utils.check_file_exists(self.key_json)
         utils.check_file_exists(self.parameters_json)

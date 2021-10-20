@@ -11,14 +11,14 @@ from pseudolabel.pseudolabel_config import PseudolabelConfig
 
 def test_splitting_data(config: PseudolabelConfig):
     splitting_data(
-        tuner_output_images=config.tuner_output_folder,
+        tuner_output_images=config.tuner_output_folder_image,
         intermediate_files_folder=config.intermediate_files_folder,
     )
 
 
 def test_split_and_fit_cp(config: PseudolabelConfig):
     preds_fva, labels, cdvi_fit, cdvi_eval = splitting_data(
-        tuner_output_images=config.tuner_output_folder,
+        tuner_output_images=config.tuner_output_folder_image,
         intermediate_files_folder=config.intermediate_files_folder,
     )
 

@@ -17,7 +17,7 @@ def test_find_best_model(config):
 
 def test_create_ysparse_fold2(config):
     predict_images_fold2.create_ysparse_fold2(
-        tuner_output_images=config.tuner_output_folder,
+        tuner_output_images=config.tuner_output_folder_image,
         intermediate_files_folder=config.intermediate_files_folder,
     )
 
@@ -40,7 +40,7 @@ def test_find_best_model_and_run_sparsechem(config):
 
     predict_images_fold2.run_sparsechem_predict(
         sparsechem_predictor_path=config.sparsechem_predictor_path,
-        tuner_output_dir=config.tuner_output_folder,
+        tuner_output_dir=config.tuner_output_folder_image,
         best_model=best_model,
         intermediate_files_folder=config.intermediate_files_folder,
         logs_dir=config.log_dir,
