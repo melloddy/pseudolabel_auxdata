@@ -1,4 +1,5 @@
 import logging
+import os
 
 from pseudolabel import (
     hyperparameters_scan,
@@ -20,21 +21,21 @@ def run_full_pipe(config: PseudolabelConfig):
         t0_melloddy_path=config.t0_melloddy_path,
         t1_melloddy_path=config.t1_melloddy_path,
         t2_images_path=config.t2_images_path,
-        output_folder=config.output_folder_path,
+        tuner_images_input_folder=config.tuner_input_folder_image,
     )
     generation.synchronize_thresholds(
         t8_tunner_path=config.t8c_baseline,
-        tuner_input_images=config.output_folder_path,
+        tuner_images_input_folder=config.tuner_input_folder_image,
         delete_intermediate_files=False,
     )
 
     LOGGER.info("Run tuner on images data")
     tuner_tools.run_tuner(
-        images_input_folder=config.output_folder_path,
+        tuner_images_input_folder=config.tuner_input_folder_image,
         json_params=config.parameters_json,
         json_key=config.key_json,
         json_ref_hash=config.ref_hash_json,
-        output_dir=config.output_folder_path,
+        output_dir=os.path.join(config.tuner_output_folder_image, ".."),
         n_cpu=config.max_cpu,
     )
     tuner_tools.process_tuner_output(
@@ -51,6 +52,7 @@ def run_full_pipe(config: PseudolabelConfig):
         sparsechem_trainer_path=config.sparsechem_trainer_path,
         tuner_output_dir=config.tuner_output_folder_image,
         show_progress=config.show_progress,
+        torch_device=config.torch_device,
     )
 
     LOGGER.info(
@@ -72,6 +74,8 @@ def run_full_pipe(config: PseudolabelConfig):
         best_model=best_model,
         intermediate_files_folder=config.intermediate_files_folder,
         logs_dir=config.log_dir,
+        dataloader_num_workers=config.dataloader_num_workers,
+        torch_device=config.torch_device,
     )
 
     LOGGER.info("Splitting data for conformal predictors training")
@@ -112,6 +116,8 @@ def run_full_pipe(config: PseudolabelConfig):
         best_model=best_model,
         intermediate_files_folder=config.intermediate_files_folder,
         logs_dir=config.log_dir,
+        dataloader_num_workers=config.dataloader_num_workers,
+        torch_device=config.torch_device,
     )
 
     LOGGER.info("Apply conformal predictors on all images predictions")

@@ -21,4 +21,5 @@ baseline*
 .pytest_cache
 __pycache__/
 .idea/
-data/
+data*/
+output/

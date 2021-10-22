@@ -17,6 +17,7 @@ def run_hyperopt(
     hp_output_dir: str,
     sparsechem_trainer_path: str,
     tuner_output_dir: str,
+    torch_device: str,
     show_progress: bool = True,
 ):
     distqdm = not show_progress
@@ -122,6 +123,8 @@ def run_hyperopt(
                             IMAGE_MODEL_NAME,
                             "--output_dir",
                             current_model_dir,
+                            "--dev",
+                            torch_device,
                         ],
                         check=True,
                         stdout=open(log_file, "w"),

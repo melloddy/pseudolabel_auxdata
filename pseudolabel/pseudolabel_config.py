@@ -12,6 +12,7 @@ from pseudolabel.constants import (
     DEFAULT_EPOCH_LR_STEPS,
     DEFAULT_HIDDEN_SIZES,
     IMAGE_MODEL_NAME,
+    IMAGE_MODEL_DATA,
 )
 
 
@@ -57,7 +58,12 @@ class PseudolabelConfig:
 
     @property
     def tuner_output_folder_image(self) -> str:
-        path = os.path.join(self.output_folder_path, IMAGE_MODEL_NAME)
+        path = os.path.join(self.output_folder_path, IMAGE_MODEL_DATA, "tuner_output")
+        return path
+
+    @property
+    def tuner_input_folder_image(self) -> str:
+        path = os.path.join(self.output_folder_path, IMAGE_MODEL_DATA, "tuner_input")
         return path
 
     @property
