@@ -13,6 +13,7 @@ from scipy.sparse import csr_matrix, lil_matrix, load_npz
 from tqdm import tqdm
 
 from pseudolabel.constants import IMAGE_MODEL_NAME
+from pseudolabel.errors import PredictOptError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -143,7 +144,7 @@ def run_sparsechem_predict(
     if logs_dir:
         os.makedirs(logs_dir, exist_ok=True)
 
-    subprocess.run(
+    proc = subprocess.run(
         [
             "python",
             sparsechem_predictor_path,
@@ -162,7 +163,6 @@ def run_sparsechem_predict(
             "--num_workers",
             str(dataloader_num_workers),
         ],
-        check=True,
         stdout=open(os.path.join(logs_dir, "predict_images_fold2_log.txt"), "w")
         if logs_dir
         else subprocess.PIPE,
@@ -170,3 +170,7 @@ def run_sparsechem_predict(
         if logs_dir
         else subprocess.PIPE,
     )
+
+    error = proc.stderr
+    if error:
+        raise PredictOptError(f"HyperOpt failed: \n {error.decode()}")

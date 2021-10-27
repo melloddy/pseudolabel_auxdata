@@ -7,10 +7,9 @@ unittests_general_env:
     - poetry config virtualenvs.create false --local
     - poetry install
     - poetry run task linter
-    - poetry run task black
+    - poetry run task check-black
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@git.infra.melloddy.eu/wp1/data_prep.git
-    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@git.infra.melloddy.eu/wp2/sparsechem.git
+    - git clone --branch 58-specifying-number-of-workers-for-data-loaders https://gitlab-ci-token:${CI_JOB_TOKEN}@git.infra.melloddy.eu/wp2/sparsechem.git
     - pip install ./data_prep ./sparsechem
     - poetry run task mypy
-    - SPARSECHEM_PATH=./sparsechem
-    - poetry run task test
+    - SPARSECHEM_PATH=./sparsechem poetry run task test

@@ -6,6 +6,7 @@ import pandas as pd
 from scipy.sparse import csr_matrix, lil_matrix, load_npz, save_npz
 
 from pseudolabel.constants import IMAGE_MODEL_NAME
+from pseudolabel.errors import PredictOptError
 
 
 def create_x_ysparse_all_images(
@@ -73,7 +74,7 @@ def run_sparsechem_predict(
     if logs_dir:
         os.makedirs(logs_dir, exist_ok=True)
 
-    subprocess.run(
+    proc = subprocess.run(
         [
             "python",
             sparsechem_predictor_path,
@@ -106,3 +107,7 @@ def run_sparsechem_predict(
         if logs_dir
         else subprocess.PIPE,
     )
+
+    error = proc.stderr
+    if error:
+        raise PredictOptError(f"HyperOpt failed: \n {error.decode()}")

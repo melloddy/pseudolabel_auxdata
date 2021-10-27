@@ -5,7 +5,6 @@ repos:
         name: Black
         entry: poetry run task black
         pass_filenames: false
-        types: [file, json, python]
         language: system
 
   - repo: local
@@ -14,7 +13,6 @@ repos:
         name: Flake8
         entry: poetry run task linter
         pass_filenames: false
-        types: [file, python]
         language: system
 
   - repo: local
@@ -23,7 +21,6 @@ repos:
         name: isort
         entry: poetry run task isort
         pass_filenames: false
-        types: [file, python]
         language: system
 
   - repo: local
@@ -32,7 +29,6 @@ repos:
         name: MyPy
         entry: poetry run task mypy
         pass_filenames: false
-        types: [file, python]
         language: system
 
   - repo: https://github.com/pre-commit/pre-commit-hooks

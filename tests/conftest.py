@@ -47,7 +47,7 @@ def config(
         ref_hash_json=os.path.join(params_folder, "ref_hash.json"),
         tuner_output_folder_baseline=os.path.join(melloddy_folder, "tuner_output"),
         output_folder_path=output_folder,
-        sparsechem_path=os.getenv("SPARSECHEM_PATH", "/Users/tmp2/Desktop/iktos/sparsechem"),
+        sparsechem_path=os.getenv("SPARSECHEM_PATH", "/Users/tmp2/Desktop/iktos/sparsechem"), # To set this from the CI
         dataloader_num_workers=0,
         imagemodel_hidden_size=["50", "100"],
         imagemodel_epoch_lr_steps=[(5,3),],
