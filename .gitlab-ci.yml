@@ -1,0 +1,16 @@
+unittests_general_env:
+  image: continuumio/miniconda3:latest
+  script:
+    - apt-get update -q -y
+    - apt-get install -y build-essential
+    - pip install -U pip poetry
+    - poetry config virtualenvs.create false --local
+    - poetry install
+    - poetry run task linter
+    - poetry run task black
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@git.infra.melloddy.eu/wp1/data_prep.git
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@git.infra.melloddy.eu/wp2/sparsechem.git
+    - pip install ./data_prep ./sparsechem
+    - poetry run task mypy
+    - SPARSECHEM_PATH=./sparsechem
+    - poetry run task test
