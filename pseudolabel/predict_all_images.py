@@ -1,9 +1,9 @@
+import os
 import subprocess
 from typing import Optional
 
 import pandas as pd
 from scipy.sparse import csr_matrix, lil_matrix, load_npz, save_npz
-import os
 
 from pseudolabel.constants import IMAGE_MODEL_NAME
 

@@ -20,6 +20,8 @@ def run_hyperopt(
     torch_device: str,
     show_progress: bool = True,
 ):
+    # TODO add step number/steps
+
     distqdm = not show_progress
     # Loop over hyperparameter combinations and edit script
     i = 0

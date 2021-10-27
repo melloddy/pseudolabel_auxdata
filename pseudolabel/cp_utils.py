@@ -1,5 +1,7 @@
 import numpy as np
 
+# TODO add typings
+
 
 def prob_ncm(scores, labels):
     """

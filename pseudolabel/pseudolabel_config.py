@@ -1,17 +1,19 @@
+from __future__ import annotations
+
+import json
 import multiprocessing
 import os
 from dataclasses import dataclass, field
 from typing import List, Tuple
-import torch
 
 import pandas as pd
+import torch
 
 from pseudolabel import utils
 from pseudolabel.constants import (
     DEFAULT_DROPOUTS,
     DEFAULT_EPOCH_LR_STEPS,
     DEFAULT_HIDDEN_SIZES,
-    IMAGE_MODEL_NAME,
     IMAGE_MODEL_DATA,
 )
 
@@ -53,6 +55,24 @@ class PseudolabelConfig:
             "results_tmp",
             "classification",
             "T8c.csv",
+        )
+        return path
+
+    @property
+    def t10c_cont_baseline(self) -> str:
+        path = os.path.join(
+            self.tuner_output_folder_baseline,
+            "results",
+            "T10c_cont.csv",
+        )
+        return path
+
+    @property
+    def t5_baseline(self) -> str:
+        path = os.path.join(
+            self.tuner_output_folder_baseline,
+            "mapping_table",
+            "T5.csv",
         )
         return path
 
@@ -107,6 +127,8 @@ class PseudolabelConfig:
         utils.check_file_exists(self.t_images_features_path)
 
         utils.check_file_exists(self.t8c_baseline)
+        utils.check_file_exists(self.t5_baseline)
+        utils.check_file_exists(self.t10c_cont_baseline)
 
         utils.check_file_exists(self.key_json)
         utils.check_file_exists(self.parameters_json)
@@ -126,3 +148,9 @@ class PseudolabelConfig:
         # TODO Add more checks
         self.__check_files_exist()
         self.__t_images_check()
+
+    @classmethod
+    def load_config(cls, json_path: str) -> PseudolabelConfig:
+        with open(json_path) as config_file:
+            config_dict = json.load(config_file)
+            return cls(**config_dict)

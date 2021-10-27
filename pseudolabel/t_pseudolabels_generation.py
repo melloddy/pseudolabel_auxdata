@@ -25,7 +25,7 @@ def generate_t_aux_pl(
         )
     )
 
-    ## T0 creation
+    # T0 creation
 
     # change from AUX_IMG to AUX_HTS
     # change the 1.0 label to 6.0 (to accommodate the rscore 3 threshold and force positive labels)
@@ -135,7 +135,7 @@ def find_labels_of_auxtasks(
         index=False,
     )
     # now filter the baseline T10c on the iais which can actually be mapped from t8_mgd
-    ## retrieve the input compound ids from T5
+    # retrieve the input compound ids from T5
 
     path = os.path.join(tuner_output_folder_baseline, "results", "T10c_cont.csv")
     t10c_baseline = pd.read_csv(path)

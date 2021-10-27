@@ -2,10 +2,10 @@ import logging
 import os
 
 from pseudolabel import (
-    hyperparameters_scan,
-    predict_images_fold2,
     cp_fitting,
+    hyperparameters_scan,
     predict_all_images,
+    predict_images_fold2,
     t_pseudolabels_generation,
 )
 from pseudolabel.pseudolabel_config import PseudolabelConfig
@@ -15,6 +15,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def run_full_pipe(config: PseudolabelConfig):
+    # TODO Add step number/steps
 
     LOGGER.info("Starting tuner preprocessing")
     generation.find_overlap_with_melloddy(

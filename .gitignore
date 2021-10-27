@@ -23,3 +23,8 @@ __pycache__/
 .idea/
 data*/
 output/
+.DS_Store
+.coverage*
+cov_html/
+data.zip
+.python-version

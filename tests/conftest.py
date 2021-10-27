@@ -7,7 +7,7 @@ from pseudolabel.pseudolabel_config import PseudolabelConfig
 
 @fixture(scope="session")
 def workdir() -> str:
-    return "/Users/tmp2/Desktop/iktos/pseudolabel_auxdata/"
+    return os.path.dirname(os.path.abspath(__file__))
 
 
 @fixture(scope="session")
@@ -16,8 +16,9 @@ def data_folder(workdir) -> str:
 
 
 @fixture(scope="session")
-def output_folder(workdir) -> str:
-    return os.path.join(workdir, "output")
+def output_folder(tmpdir_factory) -> str:
+    output_dir = tmpdir_factory.mktemp("output")
+    return str(output_dir)
 
 
 @fixture(scope="session")
@@ -28,11 +29,6 @@ def params_folder(data_folder) -> str:
 @fixture(scope="session")
 def melloddy_folder(data_folder) -> str:
     return os.path.join(data_folder, "Melloddy")
-
-
-@fixture(scope="session")
-def tuner_images_output_folder():
-    return "/Users/tmp2/Desktop/iktos/pseudolabel_auxdata/output"
 
 
 @fixture(scope="session")
@@ -53,4 +49,7 @@ def config(
         output_folder_path=output_folder,
         sparsechem_path="/Users/tmp2/Desktop/iktos/sparsechem",
         dataloader_num_workers=0,
+        imagemodel_hidden_size=["50", "100"],
+        imagemodel_epoch_lr_steps=[(5,3),],
+        imagemodel_dropouts=[0.6]
     )

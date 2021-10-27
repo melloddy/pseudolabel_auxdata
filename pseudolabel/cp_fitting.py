@@ -1,11 +1,12 @@
 import json
+import os
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-import os
-from pseudolabel.cp_utils import prob_ncm, micp, cp_label_predictor
-import matplotlib.pyplot as plt
+
+from pseudolabel.cp_utils import cp_label_predictor, micp, prob_ncm
 
 
 def splitting_data(
@@ -131,7 +132,6 @@ def fit_cp(
             certain_idcs = np.where(
                 (np.array(cp_test) == "0") | (np.array(cp_test) == "1")
             )[0]
-            idx_uncertain_none = np.where([e == "uncertain none" for e in cp_test])[0]
             idx_uncertain_both = np.where([e == "uncertain both" for e in cp_test])[0]
             idx_inact = np.where(labels_fte_col == 0)[0]
             idx_inact_certain = np.intersect1d(idx_inact, certain_idcs)
