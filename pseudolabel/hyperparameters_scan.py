@@ -52,7 +52,6 @@ def run_hyperopt(
                 os.makedirs(current_model_dir, exist_ok=True)
 
                 log_file = os.path.join(current_model_dir, "log.txt")
-                err_file = os.path.join(current_model_dir, "error.txt")
                 # TODO Check best way to call subprocess
                 # TODO Add all arguments of sparsechem
 
@@ -130,9 +129,8 @@ def run_hyperopt(
                         torch_device,
                     ],
                     stdout=open(log_file, "w"),
-                    stderr=open(err_file, "w"),
+                    stderr=subprocess.PIPE,
                 )
 
-                error = proc.stderr
-                if error:
-                    raise HyperOptError(f"HyperOpt failed: \n {error.decode()}")
+                if proc.returncode != 0:
+                    raise HyperOptError(f"HyperOpt failed: \n {proc.stderr.decode()}")

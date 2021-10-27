@@ -166,11 +166,8 @@ def run_sparsechem_predict(
         stdout=open(os.path.join(logs_dir, "predict_images_fold2_log.txt"), "w")
         if logs_dir
         else subprocess.PIPE,
-        stderr=open(os.path.join(logs_dir, "predict_images_fold2_err.txt"), "w")
-        if logs_dir
-        else subprocess.PIPE,
+        stderr=subprocess.PIPE,
     )
 
-    error = proc.stderr
-    if error:
-        raise PredictOptError(f"HyperOpt failed: \n {error.decode()}")
+    if proc.returncode != 0:
+        raise PredictOptError(f"Predict images fold failed: \n {proc.stderr.decode()}")

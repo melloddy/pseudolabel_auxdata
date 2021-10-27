@@ -95,19 +95,13 @@ def run_sparsechem_predict(
             "--num_workers",
             str(dataloader_num_workers),
         ],
-        check=True,
         stdout=open(
             os.path.join(logs_dir, "pred_cpmodel_step2_inference_allcmpds_log.txt"), "w"
         )
         if logs_dir
         else subprocess.PIPE,
-        stderr=open(
-            os.path.join(logs_dir, "pred_cpmodel_step2_inference_allcmpds_err.txt"), "w"
-        )
-        if logs_dir
-        else subprocess.PIPE,
+        stderr=subprocess.PIPE,
     )
 
-    error = proc.stderr
-    if error:
-        raise PredictOptError(f"HyperOpt failed: \n {error.decode()}")
+    if proc.returncode != 0:
+        raise PredictOptError(f"Predict all images failed: \n {proc.stderr.decode()}")
