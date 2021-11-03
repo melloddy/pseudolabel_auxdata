@@ -12,8 +12,8 @@
   "max_cpu": 4,
   "dataloader_num_workers": 0,
   "torch_device": "cpu",
-  "imagemodel_hidden_size": ["50", "100"],
-  "imagemodel_epoch_lr_steps": [[5, 3]],
+  "imagemodel_hidden_size": [["50"], ["100"]],
+  "imagemodel_epochs_lr_steps" : [[5, 3]],
   "imagemodel_dropouts": [0.6],
   "show_progress": true
 }

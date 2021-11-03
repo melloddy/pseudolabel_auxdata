@@ -49,7 +49,7 @@ def config(
         output_folder_path=output_folder,
         sparsechem_path=os.getenv("SPARSECHEM_PATH", "/Users/tmp2/Desktop/iktos/sparsechem"), # To set this from the CI
         dataloader_num_workers=0,
-        imagemodel_hidden_size=["50", "100"],
-        imagemodel_epoch_lr_steps=[(5,3),],
-        imagemodel_dropouts=[0.6]
+        imagemodel_hidden_size=[["50"], ["100"]],
+        imagemodel_epochs_lr_steps=[(5, 3), ],
+        imagemodel_dropouts=[0.6],
     )

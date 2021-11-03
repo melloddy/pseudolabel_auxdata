@@ -12,6 +12,5 @@ __pycache__/
 cov_html/
 data.zip
 .python-version
-/data/
-/data_big/
-/output/
+/data*/
+/output*/

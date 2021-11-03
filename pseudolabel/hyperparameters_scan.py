@@ -12,8 +12,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 def run_hyperopt(
-    epoch_lr_steps: List[Tuple[int, int]],
-    hidden_sizes: List[str],
+    epochs_lr_steps: List[Tuple[int, int]],
+    hidden_sizes: List[List[str]],
     dropouts: List[float],
     hp_output_dir: str,
     sparsechem_trainer_path: str,
@@ -26,9 +26,9 @@ def run_hyperopt(
     distqdm = not show_progress
     # Loop over hyperparameter combinations and edit script
     i = 0
-    for epoch_lr_step in tqdm(
-        epoch_lr_steps,
-        desc="HyperOpt Epoch - LR step",
+    for epoch, lr_step in tqdm(
+        epochs_lr_steps,
+        desc="HyperOpt Epoch-LR Step",
         disable=distqdm,
     ):
         for dropout in tqdm(
@@ -44,8 +44,8 @@ def run_hyperopt(
                 num = str(i).zfill(3)
 
                 # Remove spaces in hidden layers (for file name)
-                hidden_name = hidden.replace(" ", "-")
-                run_name = f"Run_{num}_epoch_lr_step_{epoch_lr_step[0]}_{epoch_lr_step[1]}_drop_{dropout}_size_{hidden_name}"
+                hidden_name = "-".join(hidden)
+                run_name = f"Run_{num}_epoch_{epoch}_lr_step_{lr_step}_drop_{dropout}_size_{hidden_name}"
                 # Create script folder and create script
 
                 current_model_dir = os.path.join(hp_output_dir, run_name)
@@ -56,7 +56,7 @@ def run_hyperopt(
                 # TODO Add all arguments of sparsechem
 
                 LOGGER.info(
-                    f"Running HyperOpt with Hidden={hidden} Dropout={dropout} EpochLRStep={epoch_lr_step}"
+                    f"Running HyperOpt with Hidden={hidden} Dropout={dropout} Epoch={epoch} LRStep={lr_step}"
                 )
                 proc = subprocess.run(
                     [
@@ -88,7 +88,7 @@ def run_hyperopt(
                             "cls_weights.csv",
                         ),
                         "--hidden_sizes",
-                        hidden,
+                        *hidden,
                         "--last_dropout",
                         str(dropout),
                         "--middle_dropout",
@@ -104,9 +104,9 @@ def run_hyperopt(
                         "--lr_alpha",
                         "0.3",
                         "--lr_steps",
-                        str(epoch_lr_step[1]),
+                        str(lr_step),
                         "--epochs",
-                        str(epoch_lr_step[0]),
+                        str(epoch),
                         "--normalize_loss",
                         "100_000",
                         "--eval_frequency",

@@ -76,7 +76,12 @@ def splitting_data(
 
 
 def fit_cp(
-    preds_fva, labels, cdvi_fit, cdvi_eval, analysis_folder: str, eps: float = 0.05
+    preds_fva: np.ndarray,
+    labels: np.ndarray,
+    cdvi_fit: np.ndarray,
+    cdvi_eval: np.ndarray,
+    analysis_folder: str,
+    eps: float = 0.05,
 ):
     e_inacts = []
     e_acts = []

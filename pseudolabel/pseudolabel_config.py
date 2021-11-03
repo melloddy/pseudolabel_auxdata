@@ -12,7 +12,7 @@ import torch
 from pseudolabel import utils
 from pseudolabel.constants import (
     DEFAULT_DROPOUTS,
-    DEFAULT_EPOCH_LR_STEPS,
+    DEFAULT_EPOCHS_LR_STEPS,
     DEFAULT_HIDDEN_SIZES,
     IMAGE_MODEL_DATA,
 )
@@ -40,9 +40,11 @@ class PseudolabelConfig:
     dataloader_num_workers: int = multiprocessing.cpu_count() - 1
     torch_device: str = "cuda" if torch.cuda.is_available() else "cpu"
 
-    imagemodel_hidden_size: List[str] = field(default_factory=DEFAULT_HIDDEN_SIZES)
-    imagemodel_epoch_lr_steps: List[Tuple[int, int]] = field(
-        default_factory=DEFAULT_EPOCH_LR_STEPS
+    imagemodel_hidden_size: List[List[str]] = field(
+        default_factory=DEFAULT_HIDDEN_SIZES
+    )
+    imagemodel_epochs_lr_steps: List[Tuple[int, int]] = field(
+        default_factory=DEFAULT_EPOCHS_LR_STEPS
     )
     imagemodel_dropouts: List[float] = field(default_factory=DEFAULT_DROPOUTS)
 

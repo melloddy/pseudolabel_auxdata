@@ -46,7 +46,7 @@ def run_full_pipe(config: PseudolabelConfig):
 
     LOGGER.info("Starting hyperparameter scan on image models")
     hyperparameters_scan.run_hyperopt(
-        epoch_lr_steps=config.imagemodel_epoch_lr_steps,
+        epochs_lr_steps=config.imagemodel_epochs_lr_steps,
         hidden_sizes=config.imagemodel_hidden_size,
         dropouts=config.imagemodel_dropouts,
         hp_output_dir=config.hyperopt_output_folder,
