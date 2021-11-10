@@ -21,7 +21,6 @@ def run_hyperopt(
     torch_device: str,
     show_progress: bool = True,
 ):
-    # TODO add step number/steps
 
     distqdm = not show_progress
     # Loop over hyperparameter combinations and edit script
@@ -30,15 +29,21 @@ def run_hyperopt(
         epochs_lr_steps,
         desc="HyperOpt Epoch-LR Step",
         disable=distqdm,
+        total=len(epochs_lr_steps),
     ):
         for dropout in tqdm(
-            dropouts, desc="HyperOpt dropout", disable=distqdm, leave=False
+            dropouts,
+            desc="HyperOpt dropout",
+            disable=distqdm,
+            leave=False,
+            total=len(dropouts),
         ):
             for hidden in tqdm(
                 hidden_sizes,
                 desc="HyperOpt Hidden Size",
                 disable=distqdm,
                 leave=False,
+                total=len(hidden_sizes),
             ):
                 i += 1
                 num = str(i).zfill(3)

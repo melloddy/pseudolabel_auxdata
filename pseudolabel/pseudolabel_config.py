@@ -36,7 +36,6 @@ class PseudolabelConfig:
     output_folder_path: str
 
     max_cpu: int = multiprocessing.cpu_count() - 1
-    # TODO add in doc that value should be set to 0 on mac
     dataloader_num_workers: int = multiprocessing.cpu_count() - 1
     torch_device: str = "cuda" if torch.cuda.is_available() else "cpu"
 

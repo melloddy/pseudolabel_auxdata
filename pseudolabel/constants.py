@@ -1,5 +1,4 @@
 # IMAGE MODEL HYPERPARAMS
-# TODO
 DEFAULT_HIDDEN_SIZES = lambda: [  # noqa
     ["50"],
     ["100"],
