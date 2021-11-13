@@ -15,5 +15,6 @@
   "imagemodel_hidden_size": [["50"], ["100"]],
   "imagemodel_epochs_lr_steps" : [[5, 3]],
   "imagemodel_dropouts": [0.6],
-  "show_progress": true
+  "show_progress": true,
+  "pseudolabel_threshold": 0.95
 }

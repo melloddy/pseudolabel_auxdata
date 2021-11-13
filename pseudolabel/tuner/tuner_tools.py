@@ -31,6 +31,7 @@ def run_tuner(
     args.activity_file = os.path.join(
         tuner_images_input_folder, "T1_synchedthreshold.csv"
     )
+
     args.weight_table = os.path.join(
         tuner_images_input_folder, "T0_synchedthreshold.csv"
     )

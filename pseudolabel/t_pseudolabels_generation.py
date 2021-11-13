@@ -55,11 +55,11 @@ def generate_t_aux_pl(
     t0_image["model_description"] = "img_" + t0_image["image_col_idx"].astype(str)
     t0_image["assay_description"] = "img_" + t0_image["image_col_idx"].astype(str)
 
-    aux_data_dir = os.path.join(intermediate_files_folder, "aux_data")
+    aux_data_dir = os.path.join(intermediate_files_folder, "aux_data_no_labels")
     os.makedirs(aux_data_dir, exist_ok=True)
 
     t0_image.to_csv(
-        os.path.join(aux_data_dir, "T0_image_pseudolabels_full.csv"), index=False
+        os.path.join(aux_data_dir, "T0_image_pseudolabels_no_labels.csv"), index=False
     )
 
     # T1 export
@@ -72,12 +72,12 @@ def generate_t_aux_pl(
     )
 
     t1_image_out.to_csv(
-        os.path.join(aux_data_dir, "T1_image_pseudolabels_full.csv"), index=False
+        os.path.join(aux_data_dir, "T1_image_pseudolabels_no_labels.csv"), index=False
     )
 
     shutil.copyfile(
         os.path.join(t2_images_path),
-        os.path.join(aux_data_dir, "T2_image_pseudolabels_full.csv"),
+        os.path.join(aux_data_dir, "T2_image_pseudolabels_no_labels.csv"),
     )
 
 
@@ -172,30 +172,35 @@ def find_labels_of_auxtasks(
     ].drop_duplicates()
 
     df_t1_truelabels_out.to_csv(
-        os.path.join(intermediate_files_folder, "aux_data", "T1_image_truelabels.csv"),
+        os.path.join(
+            intermediate_files_folder, "aux_data_no_labels", "T1_image_truelabels.csv"
+        ),
         index=False,
     )
 
 
-def replace_pseudolabels_w_labels(
-    intermediate_files_folder: str, output_pseudolabel_folder: str
-):
-
+def replace_pseudolabels_w_labels(intermediate_files_folder: str):
     path = os.path.join(
-        intermediate_files_folder, "aux_data", "T1_image_pseudolabels_full.csv"
+        intermediate_files_folder,
+        "aux_data_no_labels",
+        "T1_image_pseudolabels_no_labels.csv",
     )
     t1_image = pd.read_csv(path)
     path = os.path.join(
-        intermediate_files_folder, "aux_data", "T0_image_pseudolabels_full.csv"
+        intermediate_files_folder,
+        "aux_data_no_labels",
+        "T0_image_pseudolabels_no_labels.csv",
     )
     t0_image = pd.read_csv(path)
     path = os.path.join(
-        intermediate_files_folder, "aux_data", "T2_image_pseudolabels_full.csv"
+        intermediate_files_folder,
+        "aux_data_no_labels",
+        "T2_image_pseudolabels_no_labels.csv",
     )
     t2_image = pd.read_csv(path)
 
     path = os.path.join(
-        intermediate_files_folder, "aux_data", "T1_image_truelabels.csv"
+        intermediate_files_folder, "aux_data_no_labels", "T1_image_truelabels.csv"
     )
     t1_image_true = pd.read_csv(path)
 
@@ -240,19 +245,101 @@ def replace_pseudolabels_w_labels(
         t2_image.input_compound_id.isin(t1_images_preds_w_true.input_compound_id)
     ]
 
-    os.makedirs(output_pseudolabel_folder, exist_ok=True)
+    os.makedirs(os.path.join(intermediate_files_folder, "aux_data_full"), exist_ok=True)
 
     t1_images_preds_w_true.to_csv(
-        os.path.join(output_pseudolabel_folder, "T1_images_pseudolabels.csv"),
+        os.path.join(
+            intermediate_files_folder,
+            "aux_data_full",
+            "T1_images_pseudolabels_full.csv",
+        ),
         index=False,
     )
 
     t0_images_pseudolabels.to_csv(
-        os.path.join(output_pseudolabel_folder, "T0_images_pseudolabels.csv"),
+        os.path.join(
+            intermediate_files_folder,
+            "aux_data_full",
+            "T0_images_pseudolabels_full.csv",
+        ),
         index=False,
     )
 
     t2_images_pseudolabels.to_csv(
+        os.path.join(
+            intermediate_files_folder,
+            "aux_data_full",
+            "T2_images_pseudolabels_full.csv",
+        ),
+        index=False,
+    )
+
+
+def filter_low_confidence_pseudolabels(
+    intermediate_files_folder: str,
+    output_pseudolabel_folder: str,
+    analysis_folder: str,
+    threshold: float,
+):
+    aux_data_full_path = os.path.join(intermediate_files_folder, "aux_data_full")
+    cp_path = os.path.join(analysis_folder, "cp")
+    mapping_path = os.path.join(intermediate_files_folder, "mapping")
+
+    df_cp = pd.read_csv(os.path.join(cp_path, "summary_eps_0.05.csv"))
+    baseline_imagemodel_mapping = pd.read_csv(
+        os.path.join(mapping_path, "baseline_image_model_task_mapping.csv")
+    )
+    df_cp_mgd = pd.merge(
+        df_cp,
+        baseline_imagemodel_mapping,
+        left_on="index",
+        right_on="cont_classification_task_id_image",
+        how="inner",
+    )
+
+    df_cp_mgd.to_csv(os.path.join(cp_path, "summary_eps_0.05_mgd_cp.csv"), index=False)
+
+    T0_aux = pd.read_csv(
+        os.path.join(aux_data_full_path, "T0_images_pseudolabels_full.csv")
+    )
+    df_matching = pd.merge(
+        df_cp_mgd,
+        T0_aux,
+        left_on="baseline_compliant_input_assay_id_image",
+        right_on="input_assay_id",
+        how="inner",
+        suffixes=("_image", "_aux"),
+    )
+
+    iai_to_keep = set(
+        df_matching.query("validity_0 > @threshold")
+        .query("validity_1 > @threshold")["input_assay_id_aux"]
+        .dropna()
+    )
+    T0_aux_filtered = T0_aux[T0_aux.input_assay_id.isin(iai_to_keep)]
+
+    T1_aux = pd.read_csv(
+        os.path.join(aux_data_full_path, "T1_images_pseudolabels_full.csv")
+    )
+    T2_aux = pd.read_csv(
+        os.path.join(aux_data_full_path, "T2_images_pseudolabels_full.csv")
+    )
+
+    T1_aux_filtered = T1_aux[T1_aux.input_assay_id.isin(T0_aux_filtered.input_assay_id)]
+    T2_aux_filtered = T2_aux[
+        T2_aux.input_compound_id.isin(T1_aux_filtered.input_compound_id)
+    ]
+
+    os.makedirs(output_pseudolabel_folder, exist_ok=True)
+    T0_aux_filtered.to_csv(
+        os.path.join(output_pseudolabel_folder, "T0_images_pseudolabels.csv"),
+        index=False,
+    )
+    T1_aux_filtered.to_csv(
+        os.path.join(output_pseudolabel_folder, "T1_images_pseudolabels.csv"),
+        index=False,
+    )
+    T2_aux_filtered.to_csv(
         os.path.join(output_pseudolabel_folder, "T2_images_pseudolabels.csv"),
         index=False,
     )

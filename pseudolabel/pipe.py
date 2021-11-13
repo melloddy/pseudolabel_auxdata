@@ -145,6 +145,10 @@ class PseudolabelPipe:
 
             LOGGER.info("Generating predictions on all image compounds")
 
+            best_model = predict_images_fold2.find_best_model(
+                hyperopt_folder=self.config.hyperopt_output_folder
+            )
+
             predict_all_images.run_sparsechem_predict(
                 sparsechem_predictor_path=self.config.sparsechem_predictor_path,
                 best_model=best_model,
@@ -180,7 +184,13 @@ class PseudolabelPipe:
             )
             t_pseudolabels_generation.replace_pseudolabels_w_labels(
                 intermediate_files_folder=self.config.intermediate_files_folder,
+            )
+
+            t_pseudolabels_generation.filter_low_confidence_pseudolabels(
+                intermediate_files_folder=self.config.intermediate_files_folder,
                 output_pseudolabel_folder=self.config.output_pseudolabel_folder,
+                analysis_folder=self.config.analysis_folder,
+                threshold=self.config.pseudolabel_threshold,
             )
 
             LOGGER.info("T files for pseudolabels are generated")

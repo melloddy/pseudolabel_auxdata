@@ -56,4 +56,5 @@ def config(
             (5, 3),
         ],
         imagemodel_dropouts=[0.6],
+        pseudolabel_threshold=0.95
     )

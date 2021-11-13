@@ -35,6 +35,7 @@ poetry lock
 ### 5 - Generating T files for pseudolabels
 - generate T1-style pseudolabel file from predictions
 - replace predictions with their true values from main tasks when they exist
+- filter pseudolabels with low confidence
 - Generate pseudolabel auxiliary data T0,T1,T2 files
 
 
@@ -76,6 +77,7 @@ The list of parameters to be defined are :
   - `imagemodel_epochs_lr_steps`: list of tuple of number of epochs and corresponding learning rates for image-based model's hyperparameter scan
   - `imagemodel_dropouts`: list of number of dropouts for image-based model's hyperparameter scan
   - `show_progress` : when set true, the progess of the image-based model's hyperparameter scan is shown in the logs
+* `pseudolabel_threshold`: threshold to use to filter pseudolabels with low confidence, it should be greater to the minimum threshold 0.9. (default value : 0.9)
 
 ### Step 3: Run pipeline
 You can run the pipeline after configuring thr *config.json* file with the following command on the CLI:

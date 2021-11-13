@@ -9,8 +9,8 @@ def test_run_full_pipe(config: PseudolabelConfig):
     pseudolabel_pip.run_full_pipe()
 
 
-def test_run_partial_pip(config:PseudolabelConfig):
+def test_run_partial_pip(config: PseudolabelConfig):
     print(str(config.__dict__).replace(',', '\n'))
     pseudolabel_pip = pipe.PseudolabelPipe()
     pseudolabel_pip.config = config
-    pseudolabel_pip.run_partial_pipe("image_model_hyperscan")
+    pseudolabel_pip.run_partial_pipe("generate_pseudolabels")
