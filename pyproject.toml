@@ -32,6 +32,7 @@ taskipy = "^1.2.1"
 
 [tool.poetry.scripts]
 pseudolabel-pipe = "pseudolabel.cli:run_pipe"
+pseudolabel-partial-pipe = "pseudolabel.cli:run_parital_pipe"
 
 [tool.mypy]
 python_version = "3.7"

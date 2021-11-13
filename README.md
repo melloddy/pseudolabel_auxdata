@@ -84,6 +84,18 @@ You can run the pipeline after configuring thr *config.json* file with the follo
  pseudolabel-pipe -c config.json
 ```
 
+To run a part of the pipeline starting from an intermediate state, you can use the following command:
+
+```bash
+ pseudolabel-partial-pipe -c config.json -s <intermediate_step_name>
+```
+Where `intermediate_step_name` is one of the following and corresponds to one of the steps described above:
+* data_preprocessing
+* image_model_hyperscan
+* fit_conformal_predictors
+* generate_pseudolabels
+* generate_T_files_pseudolabels
+
 
 ## Output files
 The pipeline saves different files in the output folder specified. The outputted files are:
