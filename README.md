@@ -13,6 +13,9 @@ Don't forget to update the lock file if the dependencies have change:
 poetry lock
 ```
 
+Install [melloddy-tuner package](https://git.infra.melloddy.eu/wp1/data_prep)
+Use the following branch for sparsechem : [58-specifying-number-of-workers-for-data-loaders](https://git.infra.melloddy.eu/wp2/sparsechem/-/tree/58-specifying-number-of-workers-for-data-loaders)
+
 ## Pipeline Overview
 
 ### 1 - Data preprocessing
@@ -73,7 +76,7 @@ The list of parameters to be defined are :
   - `max_cpu`: maximum number of CPU to use when CPU is selected
   - `dataloader_num_workers` : number of worker to use in dataloader in sparsechem (needs to be set to 0 when using CPU on macOS)
 * **Image model hyperparameter** : when not precised the default value of hyperparameters defined in *pseudolabel/constants.py* are used
-  - `imagemodel_hidden_size` : list of hidden layers' sizes for image-based model's hyperparameter scan. A list of string for each hidden size layer.
+  - `imagemodel_hidden_size` : list of hidden layers' sizes for image-based model's hyperparameter scan. A list of string for each hidden size layer. (*Ex: ["125"],["250","125","67"]]* )
   - `imagemodel_epochs_lr_steps`: list of tuple of number of epochs and corresponding learning rates for image-based model's hyperparameter scan
   - `imagemodel_dropouts`: list of number of dropouts for image-based model's hyperparameter scan
   - `show_progress` : when set true, the progess of the image-based model's hyperparameter scan is shown in the logs
