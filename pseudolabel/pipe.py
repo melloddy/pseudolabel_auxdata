@@ -47,7 +47,7 @@ class PseudolabelPipe:
     def run_full_pipe(self, starting_ind=0):
         # TODO Add step number/steps
         if starting_ind <= 0:
-            LOGGER.info("Starting tuner preprocessing")
+            LOGGER.info("STEP 1/5: Starting tuner preprocessing")
             generation.find_overlap_with_melloddy(
                 t0_melloddy_path=self.config.t0_melloddy_path,
                 t1_melloddy_path=self.config.t1_melloddy_path,
@@ -75,7 +75,7 @@ class PseudolabelPipe:
             )
 
         if starting_ind <= 1:
-            LOGGER.info("Starting hyperparameter scan on image models")
+            LOGGER.info("STEP 2/5: Starting hyperparameter scan on image models")
             hyperparameters_scan.run_hyperopt(
                 epochs_lr_steps=self.config.imagemodel_epochs_lr_steps,
                 hidden_sizes=self.config.imagemodel_hidden_size,
@@ -89,7 +89,7 @@ class PseudolabelPipe:
 
         if starting_ind <= 2:
             LOGGER.info(
-                "Selecting best hyperparameter and generating y sparse fold2 for inference"
+                "STEP 3/5: Selecting best hyperparameter and generating y sparse fold2 for inference"
             )
             best_model = predict_images_fold2.find_best_model(
                 hyperopt_folder=self.config.hyperopt_output_folder
@@ -134,7 +134,7 @@ class PseudolabelPipe:
 
         if starting_ind <= 3:
             LOGGER.info(
-                "Generating x and y sparse for all images on selected tasks for inference"
+                "STEP 4/5: Generating x and y sparse for all images on selected tasks for inference"
             )
             predict_all_images.create_x_ysparse_all_images(
                 tuner_output_image=self.config.tuner_output_folder_image,
@@ -167,7 +167,7 @@ class PseudolabelPipe:
             )
 
         if starting_ind <= 4:
-            LOGGER.info("Creating T files for pseudolabels auxiliary tasks")
+            LOGGER.info("STEP 5/5: Creating T files for pseudolabels auxiliary tasks")
 
             t_pseudolabels_generation.generate_t_aux_pl(
                 intermediate_files_folder=self.config.intermediate_files_folder,
