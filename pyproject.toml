@@ -19,6 +19,7 @@ rdkit-pypi = "^2021.3.5"
 dask = "^2021.9.1"
 matplotlib = "^3.4.3"
 # melloddy-tuner = { git = "git@git.infra.melloddy.eu:wp1/data_prep.git", branch = "master" }
+torch = "^1.10.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.0"
