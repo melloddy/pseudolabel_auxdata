@@ -39,7 +39,7 @@ class PseudolabelConfig:
     dataloader_num_workers: int = multiprocessing.cpu_count() - 1
     torch_device: str = "cuda" if torch.cuda.is_available() else "cpu"
     pseudolabel_threshold: float = 0.9
-    min_threshold: float = 0.9
+    min_threshold: float = 0.8
 
     imagemodel_hidden_size: List[List[str]] = field(
         default_factory=DEFAULT_HIDDEN_SIZES
@@ -148,7 +148,7 @@ class PseudolabelConfig:
         pass
 
     def __check_threshold(self):
-        assert self.pseudolabel_threshold > self.min_threshold, (
+        assert self.pseudolabel_threshold >= self.min_threshold, (
             f"pseudolabel quality threshold {self.pseudolabel_threshold} should be greater than the minimum threshold"
             f" value {self.min_threshold}"
         )
