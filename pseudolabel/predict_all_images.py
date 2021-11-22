@@ -2,8 +2,9 @@ import os
 import subprocess
 from typing import Optional
 
+import numpy as np
 import pandas as pd
-from scipy.sparse import csr_matrix, lil_matrix, load_npz, save_npz
+from scipy.sparse import csr_matrix, load_npz, save_npz
 
 from pseudolabel.constants import IMAGE_MODEL_NAME
 from pseudolabel.errors import PredictOptError
@@ -30,23 +31,19 @@ def create_x_ysparse_all_images(
 
     col_idxs = cp_res.query("validity_0 >= 0").query("validity_1 >= 0")["index"]
 
-    # Uncomment if memory issues (to verify)
+    num_rows, num_cols = x_arr.shape[0], t10.shape[1]
 
-    # num_rows, num_cols = x_arr.shape[0], t10.shape[1]
-    #
-    # data = np.ones(num_rows * col_idxs.shape[0])
-    # rows = np.repeat(np.arange(num_rows), col_idxs.shape[0])
-    # cols = np.tile(col_idxs.values, num_rows)
-    #
-    # Y_to_pred = csr_matrix((data, (rows, cols)), shape=(num_rows, num_cols))
+    data = np.ones(num_rows * col_idxs.shape[0])
+    rows = np.repeat(np.arange(num_rows), col_idxs.shape[0])
+    cols = np.tile(col_idxs.values, num_rows)
 
-    arr = lil_matrix((x_arr.shape[0], t10.shape[1]))
-    arr[:, col_idxs] = 1
+    Y_to_pred = csr_matrix((data, (rows, cols)), shape=(num_rows, num_cols))
+
     save_npz(
         file=os.path.join(
             intermediate_files_folder, "y_sparse_step2_inference_allcmpds.npz"
         ),
-        matrix=csr_matrix(arr),
+        matrix=csr_matrix(Y_to_pred),
     )
 
     save_npz(
