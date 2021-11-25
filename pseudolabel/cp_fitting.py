@@ -4,6 +4,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from scipy.sparse import csc_matrix
 from tqdm import tqdm
 
 from pseudolabel.cp_utils import cp_label_predictor, micp, prob_ncm
@@ -28,21 +29,25 @@ def splitting_data(
 
     sn = pd.read_csv(path_sn)
 
-    sn_fold2 = sn.query("fold_id == @fold_va")
+    sn_fold = sn.query("fold_id == @fold_va")
     sn_scaffolds = (
-        sn_fold2.groupby(by="sn_smiles")
+        sn_fold.groupby(by="sn_smiles")
         .count()["input_compound_id"]
         .sort_values(ascending=False)
     )
 
     sn_map = sn_scaffolds.reset_index().drop(columns="input_compound_id")
-    # sn_map['fold_split'] = np.tile([0,1],reps=len(sn_scaffolds)//2) # ensuring similar size of both groups
-    sn_map["fold_split"] = 0
-    sn_map.loc[sn_scaffolds.reset_index().sample(frac=0.5).index, "fold_split"] = 1
 
-    sn_mgd = pd.merge(sn_fold2, sn_map, how="inner", on="sn_smiles")
+    if len(sn_scaffolds) % 2 == 0:
+        sn_map["fold_split"] = np.tile([0, 1], reps=len(sn_scaffolds) // 2)
+    else:
+        sn_map["fold_split"] = np.hstack(
+            [np.tile([0, 1], reps=len(sn_scaffolds) // 2), [0]]
+        )
 
-    assert len(sn_mgd) == len(sn_fold2)
+    sn_mgd = pd.merge(sn_fold, sn_map, how="inner", on="sn_smiles")
+
+    assert len(sn_mgd) == len(sn_fold)
 
     t5 = pd.read_csv(path_t5)
     t6_cont = pd.read_csv(path_t6_cont)
@@ -76,41 +81,60 @@ def splitting_data(
 
 
 def fit_cp(
-    preds_fva: np.ndarray,
+    preds: np.ndarray,
     labels: np.ndarray,
     cdvi_fit: np.ndarray,
     cdvi_eval: np.ndarray,
     analysis_folder: str,
     eps: float = 0.05,
 ):
+
+    idxs = []
+    unis = []
+    e_overall = []
     e_inacts = []
     e_acts = []
+    e_inacts_nonone = []
+    e_acts_nonone = []
+    certain_acts = []
+    certain_inacts = []
+    uncertain_boths = []
+    uncertain_nones = []
+    # labelled
     val_inacts = []
     val_acts = []
     lit_val_inacts = []
     lit_val_acts = []
-    unis = []
-    idxs = []
     n_acts = []
     n_inacts = []
+
     ncms_fva_fit_dict = {}
     labels_fva_fit_dict = {}
 
-    for col in tqdm(list(np.unique(preds_fva.nonzero()[1]))):
+    preds_fva = csc_matrix(preds[cdvi_fit, :])
+    preds_fte = csc_matrix(preds[cdvi_eval, :])
+
+    labels_fva = csc_matrix(labels[cdvi_fit, :])
+    labels_fte = csc_matrix(labels[cdvi_eval, :])
+
+    for col in tqdm(list(np.unique(preds.nonzero()[1]))):
         try:
-            row_idx_preds_fit = np.intersect1d(preds_fva[:, col].nonzero()[0], cdvi_fit)
-            row_idx_preds_eval = np.intersect1d(
-                preds_fva[:, col].nonzero()[0], cdvi_eval
-            )
+            # fit
+            preds_fva_col = preds_fva.data[
+                preds_fva.indptr[col] : preds_fva.indptr[col + 1]
+            ]
+            preds_fte_col = preds_fte.data[
+                preds_fte.indptr[col] : preds_fte.indptr[col + 1]
+            ]
 
-            preds_fva_col = preds_fva[row_idx_preds_fit, col].toarray().squeeze()
-            preds_fte_col = preds_fva[row_idx_preds_eval, col].toarray().squeeze()
+            labels_fva_col = labels_fva.data[
+                labels_fva.indptr[col] : labels_fva.indptr[col + 1]
+            ]
+            labels_fte_col = labels_fte.data[
+                labels_fte.indptr[col] : labels_fte.indptr[col + 1]
+            ]
 
-            row_idx_labels_fit = np.intersect1d(labels[:, col].nonzero()[0], cdvi_fit)
-            row_idx_labels_eval = np.intersect1d(labels[:, col].nonzero()[0], cdvi_eval)
-            labels_fva_col = labels[row_idx_labels_fit, col].toarray().squeeze()
             labels_fva_col = np.where(labels_fva_col == -1, 0, 1)
-            labels_fte_col = labels[row_idx_labels_eval, col].toarray().squeeze()
             labels_fte_col = np.where(labels_fte_col == -1, 0, 1)
 
             ncms_fva = prob_ncm(preds_fva_col, labels_fva_col)
@@ -124,8 +148,8 @@ def fit_cp(
             ] = (
                 labels_fva_col.tolist()
             )  # use tolist() to avoid difficulties with the serialisation
-            # ncms_test_0 = prob_ncm(preds_fte_col, labels_fte_col)
-            # ncms_test_1 = prob_ncm(preds_fte_col, labels_fte_col)
+
+            # apply
             ncms_test_0 = prob_ncm(preds_fte_col, np.repeat(0.0, len(preds_fte_col)))
             ncms_test_1 = prob_ncm(preds_fte_col, np.repeat(1.0, len(preds_fte_col)))
 
@@ -133,60 +157,97 @@ def fit_cp(
                 ncms_fva, labels_fva_col, ncms_test_0, ncms_test_1, randomized=False
             )
 
-            cp_test = [cp_label_predictor(pe0, pe1, eps) for pe0, pe1 in zip(p0, p1)]
-            certain_idcs = np.where(
-                (np.array(cp_test) == "0") | (np.array(cp_test) == "1")
-            )[0]
+            cp_test = np.array(
+                [str(cp_label_predictor(pe0, pe1, eps)) for pe0, pe1 in zip(p0, p1)]
+            )
+
+            # Eval
+            uni = np.unique(cp_test)
+            idx_certain_inact = np.where(cp_test == "0")[0]
+            idx_certain_act = np.where(cp_test == "1")[0]
+            idx_uncertain_none = np.where([e == "uncertain none" for e in cp_test])[0]
             idx_uncertain_both = np.where([e == "uncertain both" for e in cp_test])[0]
-            idx_inact = np.where(labels_fte_col == 0)[0]
-            idx_inact_certain = np.intersect1d(idx_inact, certain_idcs)
-            idx_inact_both = np.intersect1d(idx_inact, idx_uncertain_both)
-            idx_act = np.where(labels_fte_col == 1)[0]
-            idx_act_certain = np.intersect1d(idx_act, certain_idcs)
-            idx_act_both = np.intersect1d(idx_act, idx_uncertain_both)
 
             # efficiency
-            efficiency_inact = len(idx_inact_certain) / len(idx_inact)
-            efficiency_act = len(idx_act_certain) / len(idx_act)
+            efficiency_overall = (len(idx_certain_inact) + len(idx_certain_act)) / len(
+                cp_test
+            )
+            efficiency_act = len(idx_certain_act) / len(cp_test)
+            efficiency_inact = len(idx_certain_inact) / len(cp_test)
 
-            # validity
-            validity_inact = np.sum(
-                np.array(cp_test)[idx_inact_certain]
-                == labels_fte_col[idx_inact_certain].astype(str)
-            ) / len(np.array(cp_test)[idx_inact_certain])
-            validity_act = np.sum(
-                np.array(cp_test)[idx_act_certain]
-                == labels_fte_col[idx_act_certain].astype(str)
-            ) / len(np.array(cp_test)[idx_act_certain])
+            try:
+                efficiency_act_nonone = len(idx_certain_act) / (
+                    len(idx_certain_act) + len(idx_uncertain_both)
+                )
+            except ZeroDivisionError:
+                efficiency_act_nonone = np.nan
+            try:
+                efficiency_inact_nonone = len(idx_certain_inact) / (
+                    len(idx_certain_inact) + len(idx_uncertain_both)
+                )
+            except ZeroDivisionError:
+                efficiency_inact_nonone = np.nan
 
+            idx_inact_labels = np.where(labels_fte_col == 0)[0]
+            idx_act_labels = np.where(labels_fte_col == 1)[0]
+
+            idx_inact_both = np.intersect1d(idx_inact_labels, idx_uncertain_both)
+            idx_act_both = np.intersect1d(idx_act_labels, idx_uncertain_both)
+
+            # NPV/PPV
+            if len(idx_certain_inact) > 0:
+                validity_inact = np.sum(
+                    cp_test[idx_certain_inact]
+                    == labels_fte_col[idx_certain_inact].astype(str)
+                ) / len(cp_test[idx_certain_inact])
+
+                literature_validity_inact = (
+                    np.sum(
+                        cp_test[idx_certain_inact]
+                        == labels_fte_col[idx_certain_inact].astype(str)
+                    )
+                    + len(idx_inact_both)
+                ) / len(idx_inact_labels)
+            else:
+                validity_inact = 0
+                literature_validity_inact = len(idx_inact_both) / len(idx_inact_labels)
+
+            if len(idx_certain_act) > 0:
+                validity_act = np.sum(
+                    cp_test[idx_certain_act]
+                    == labels_fte_col[idx_certain_act].astype(str)
+                ) / len(cp_test[idx_certain_act])
+
+                literature_validity_act = (
+                    np.sum(
+                        cp_test[idx_certain_act]
+                        == labels_fte_col[idx_certain_act].astype(str)
+                    )
+                    + len(idx_act_both)
+                ) / len(idx_act_labels)
+            else:
+                validity_act = 0
+                literature_validity_act = len(idx_act_both) / len(idx_act_labels)
             # literature validity
-            literature_validity_inact = (
-                np.sum(
-                    np.array(cp_test)[idx_inact_certain]
-                    == labels_fte_col[idx_inact_certain].astype(str)
-                )
-                + len(idx_inact_both)
-            ) / len(idx_inact)
-            literature_validity_act = (
-                np.sum(
-                    np.array(cp_test)[idx_act_certain]
-                    == labels_fte_col[idx_act_certain].astype(str)
-                )
-                + len(idx_act_both)
-            ) / len(idx_act)
 
-            uni = np.unique(cp_test)
-
+            idxs.append(col)
+            unis.append(str(list(uni)))
+            e_overall.append(efficiency_overall)
             e_inacts.append(efficiency_inact)
             e_acts.append(efficiency_act)
+            e_inacts_nonone.append(efficiency_inact_nonone)
+            e_acts_nonone.append(efficiency_act_nonone)
+            certain_acts.append(len(idx_certain_act))
+            certain_inacts.append(len(idx_certain_inact))
+            uncertain_boths.append(len(idx_uncertain_both))
+            uncertain_nones.append(len(idx_uncertain_none))
+            # labelled
             val_inacts.append(validity_inact)
             val_acts.append(validity_act)
             lit_val_inacts.append(literature_validity_inact)
             lit_val_acts.append(literature_validity_act)
-            unis.append(str(list(uni)))
-            idxs.append(col)
-            n_acts.append(len(idx_act))
-            n_inacts.append(len(idx_inact))
+            n_acts.append(len(idx_act_labels))
+            n_inacts.append(len(idx_inact_labels))
 
         except Exception as e:
             raise e
@@ -198,21 +259,33 @@ def fit_cp(
     with open(os.path.join(cp_analysis_folder, "labels_fva_dict.json"), "w") as fp:
         json.dump(labels_fva_fit_dict, fp)
 
-    df = pd.DataFrame(
+    df_out = pd.DataFrame(
         {
-            "n_inactives_eval": n_inacts,
-            "n_actives_eval": n_acts,
-            "efficiency_0": e_inacts,
-            "efficiency_1": e_acts,
-            "validity_0": val_inacts,
-            "validity_1": val_acts,
+            "index": idxs,
+            "cp_values": unis,
+            "efficiency_overall": e_overall,
+            "efficiency_inactives": e_inacts,
+            "efficiency_actives": e_acts,
+            "efficiency_inactives_nonone": e_inacts_nonone,
+            "efficiency_actives_nonone": e_acts_nonone,
+            "certain_inacts_preds": certain_inacts,
+            "certain_act_preds": certain_acts,
+            "uncertain_both": uncertain_boths,
+            "uncertain_nones": uncertain_nones
+            # labelled
+            ,
+            "NPV_0": val_inacts,
+            "PPV_1": val_acts,
             "literature_validity_0": lit_val_inacts,
             "literature_validity_1": lit_val_acts,
-            "values": unis,
-            "index": idxs,
+            "n_inactives_eval": n_inacts,
+            "n_actives_eval": n_acts,
         }
     )
-    df.to_csv(os.path.join(cp_analysis_folder, f"summary_eps_{eps}.csv"), index=False)
+
+    df_out.to_csv(
+        os.path.join(cp_analysis_folder, f"summary_eps_{eps}.csv"), index=False
+    )
 
 
 def generate_task_stats(analysis_folder: str):
@@ -223,7 +296,7 @@ def generate_task_stats(analysis_folder: str):
 
     for i, l1 in enumerate(lst):
         for j, l2 in enumerate(lst):
-            arr[i, j] = len(df.query("validity_0 > @l1").query("validity_1 > @l2"))
+            arr[i, j] = len(df.query("NPV_0 > @l1").query("PPV_1 > @l2"))
 
     np.save(os.path.join(analysis_folder, "cp/task_stats.npy"), arr)
 
@@ -255,7 +328,6 @@ def apply_cp_aux(
     intermediate_files: str,
     eps: float = 0.05,
 ):
-
     path_preds_all_cmpds = os.path.join(
         intermediate_files, "pred_cpmodel_step2_inference_allcmpds-class.npy"
     )

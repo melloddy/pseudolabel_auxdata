@@ -29,7 +29,7 @@ def create_x_ysparse_all_images(
     # low data volume regime
     # reduced hope for obtaining both labels from the CP
 
-    col_idxs = cp_res.query("validity_0 >= 0").query("validity_1 >= 0")["index"]
+    col_idxs = cp_res.query("NPV_0 >= 0").query("PPV_1 >= 0")["index"]
 
     num_rows, num_cols = x_arr.shape[0], t10.shape[1]
 

@@ -121,7 +121,7 @@ class PseudolabelPipe:
             LOGGER.info("Fitting conformal predictors ")
 
             cp_fitting.fit_cp(
-                preds_fva=preds_fva,
+                preds=preds_fva,
                 labels=labels,
                 cdvi_fit=cdvi_fit,
                 cdvi_eval=cdvi_eval,

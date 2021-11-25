@@ -312,8 +312,8 @@ def filter_low_confidence_pseudolabels(
     )
 
     iai_to_keep = set(
-        df_matching.query("validity_0 > @threshold")
-        .query("validity_1 > @threshold")["input_assay_id_aux"]
+        df_matching.query("NPV_0 > @threshold")
+        .query("PPV_1 > @threshold")["input_assay_id_aux"]
         .dropna()
     )
     T0_aux_filtered = T0_aux[T0_aux.input_assay_id.isin(iai_to_keep)]
