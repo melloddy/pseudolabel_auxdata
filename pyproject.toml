@@ -38,6 +38,7 @@ pseudolabel-partial-pipe = "pseudolabel.cli:run_parital_pipe"
 [tool.mypy]
 python_version = "3.7"
 ignore_missing_imports = true
+ignore_errors = true
 
 [tool.taskipy.tasks]
 black = "black pseudolabel/"

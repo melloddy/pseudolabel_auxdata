@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-import shutil
 
 import numpy as np
 import pandas as pd
@@ -10,7 +9,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def generate_t_aux_pl(
-    intermediate_files_folder: str, t0_melloddy_path: str, t2_images_path: str
+    intermediate_files_folder: str, t2_melloddy_path: str, t2_images_path: str
 ):
     # add labels
     # integerization of compound id
@@ -26,10 +25,6 @@ def generate_t_aux_pl(
     )
 
     # T0 creation
-
-    # change from AUX_IMG to AUX_HTS
-    # change the 1.0 label to 6.0 (to accommodate the rscore 3 threshold and force positive labels)
-    # remove the 0.5 threshold from T0
 
     n_image_id_start = 10000000  # (high number)\n",
     image_cont_iai_to_new_iai = {
@@ -75,9 +70,17 @@ def generate_t_aux_pl(
         os.path.join(aux_data_dir, "T1_image_pseudolabels_no_labels.csv"), index=False
     )
 
-    shutil.copyfile(
-        os.path.join(t2_images_path),
-        os.path.join(aux_data_dir, "T2_image_pseudolabels_no_labels.csv"),
+    t2_images = pd.read_csv(t2_images_path)
+    t2_melloddy = pd.read_csv(t2_melloddy_path)
+
+    t2_images_pseudolabels = (
+        pd.concat([t2_images, t2_melloddy])
+        .groupby(by="input_compound_id")
+        .first()
+        .reset_index()
+    )
+    t2_images_pseudolabels.to_csv(
+        os.path.join(aux_data_dir, "T2_image_pseudolabels_no_labels.csv"), index=False
     )
 
 

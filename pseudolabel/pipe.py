@@ -171,7 +171,7 @@ class PseudolabelPipe:
 
             t_pseudolabels_generation.generate_t_aux_pl(
                 intermediate_files_folder=self.config.intermediate_files_folder,
-                t0_melloddy_path=self.config.t0_melloddy_path,
+                t2_melloddy_path=self.config.t2_melloddy_path,
                 t2_images_path=self.config.t2_images_path,
             )
 
