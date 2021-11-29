@@ -221,6 +221,7 @@ def replace_pseudolabels_w_labels(intermediate_files_folder: str):
 
     t0_image["use_in_regression"] = False
     t0_image["direction"] = "high"
+    t0_image["is_binary"] = True
     for i in range(1, 6):
         t0_image[f"expert_threshold_{i}"] = np.nan
 
@@ -228,6 +229,7 @@ def replace_pseudolabels_w_labels(intermediate_files_folder: str):
         [
             "input_assay_id",
             "assay_type",
+            "is_binary",
             "use_in_regression",
             "expert_threshold_1",
             "expert_threshold_2",
