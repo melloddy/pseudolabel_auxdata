@@ -222,6 +222,8 @@ def replace_pseudolabels_w_labels(intermediate_files_folder: str):
     t0_image["use_in_regression"] = False
     t0_image["direction"] = "high"
     t0_image["is_binary"] = True
+    t0_image["catalog_assay_id"] = np.nan
+    t0_image["parent_assay_id"] = np.nan
     for i in range(1, 6):
         t0_image[f"expert_threshold_{i}"] = np.nan
 
@@ -237,8 +239,38 @@ def replace_pseudolabels_w_labels(intermediate_files_folder: str):
             "expert_threshold_4",
             "expert_threshold_5",
             "direction",
+            "catalog_assay_id",
+            "parent_assay_id",
         ]
     ]
+
+    t0_image = t0_image.astype(
+        dtype={
+            "input_assay_id": "int64",
+            "assay_type": "str",
+            "use_in_regression": "bool",
+            "is_binary": "bool",
+            "expert_threshold_1": "float64",
+            "expert_threshold_2": "float64",
+            "expert_threshold_3": "float64",
+            "expert_threshold_4": "float64",
+            "expert_threshold_5": "float64",
+            "direction": "str",
+            "catalog_assay_id": "float64",
+            "parent_assay_id": "float64",
+        }
+    )
+
+    t1_images_preds_w_true = t1_images_preds_w_true.astype(
+        dtype={
+            "input_compound_id": "int64",
+            "input_assay_id": "int64",
+            "standard_qualifier": "str",
+            "standard_value": "float64",
+        }
+    )
+
+    t2_image = t2_image.astype(dtype={"input_compound_id": "int64", "smiles": "str"})
 
     t0_images_pseudolabels = t0_image[
         t0_image.input_assay_id.isin(t1_images_preds_w_true.input_assay_id)
