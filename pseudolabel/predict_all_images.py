@@ -16,7 +16,13 @@ def create_x_ysparse_all_images(
     analysis_folder: str,
     intermediate_files_folder: str,
 ):
-    t10_path = os.path.join(tuner_output_image, "matrices/cls/cls_T10_y.npz")
+    t10_path = os.path.join(
+        tuner_output_image,
+        "matrices",
+        "wo_aux",
+        "cls",
+        "cls_T10_y.npz",
+    )
     t10 = load_npz(t10_path)
 
     x_arr = pd.read_csv(t_images_features_path, index_col=0)

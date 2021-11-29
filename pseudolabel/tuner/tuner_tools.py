@@ -21,32 +21,41 @@ def run_tuner(
     n_cpu: int = multiprocessing.cpu_count() - 1,
 ):
 
-    args = copy.deepcopy(prepare)
+    parser = copy.deepcopy(prepare)
+    args = []
     # prepare
-    args.non_interactive = True
+    args += ["--non_interactive"]
 
-    args.structure_file = os.path.join(
-        tuner_images_input_folder, "T2_synchedthreshold.csv"
-    )
-    args.activity_file = os.path.join(
-        tuner_images_input_folder, "T1_synchedthreshold.csv"
-    )
+    args += [
+        "--structure_file",
+        os.path.join(tuner_images_input_folder, "T2_synchedthreshold.csv"),
+    ]
+    args += [
+        "--activity_file",
+        os.path.join(tuner_images_input_folder, "T1_synchedthreshold.csv"),
+    ]
 
-    args.weight_table = os.path.join(
-        tuner_images_input_folder, "T0_synchedthreshold.csv"
-    )
+    args += [
+        "--weight_table",
+        os.path.join(tuner_images_input_folder, "T0_synchedthreshold.csv"),
+    ]
 
-    args.config_file = utils.check_file_exists(json_params)
-    args.key_file = utils.check_file_exists(json_key)
-    args.ref_hash = utils.check_file_exists(json_ref_hash)
+    args += [
+        "--catalog_file",
+        os.path.join(tuner_images_input_folder, "T_cat.csv"),
+    ]
+    args += ["--using_auxiliary", "no"]
+    args += ["--config_file", utils.check_file_exists(json_params)]
+    args += ["--key_file", utils.check_file_exists(json_key)]
+    args += ["--ref_hash", utils.check_file_exists(json_ref_hash)]
 
     os.makedirs(output_dir, exist_ok=True)
-    args.output_dir = output_dir
-    args.run_name = "tuner_output"
-    args.tag = "cls"
-    args.folding_method = "scaffold"
-    args.number_cpu = n_cpu
+    args += ["--output_dir", output_dir]
+    args += ["--run_name", "tuner_output"]
+    args += ["--folding_method", "scaffold"]
+    args += ["--number_cpu", str(n_cpu)]
 
+    args = parser.parse_args(args)
     do_prepare_training(args)
 
 
@@ -78,12 +87,22 @@ def process_tuner_output(tuner_output_images: str, image_features_file: str):
     cls_T11_x_features = scipy.sparse.csr_matrix(x_features.values)
 
     cls_T11_x = scipy.sparse.load_npz(
-        os.path.join(tuner_output_images, "matrices", "cls", "cls_T11_x.npz")
+        os.path.join(
+            tuner_output_images,
+            "matrices",
+            "wo_aux",
+            "cls",
+            "cls_T11_x.npz",
+        )
     )
     assert cls_T11_x_features.shape[0] == cls_T11_x.shape[0]
 
     cls_t11_features = os.path.join(
-        tuner_output_images, "matrices", "cls", "cls_T11_x_features.npz"
+        tuner_output_images,
+        "matrices",
+        "wo_aux",
+        "cls",
+        "cls_T11_x_features.npz",
     )
 
     LOGGER.debug(f"Saving {cls_t11_features} may take a few seconds...")

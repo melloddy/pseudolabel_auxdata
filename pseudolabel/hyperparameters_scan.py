@@ -71,17 +71,23 @@ def run_hyperopt(
                         os.path.join(
                             tuner_output_dir,
                             "matrices",
+                            "wo_aux",
                             "cls",
                             "cls_T11_x_features.npz",
                         ),
                         "--y",
                         os.path.join(
-                            tuner_output_dir, "matrices", "cls", "cls_T10_y.npz"
+                            tuner_output_dir,
+                            "matrices",
+                            "wo_aux",
+                            "cls",
+                            "cls_T10_y.npz",
                         ),
                         "--folding",
                         os.path.join(
                             tuner_output_dir,
                             "matrices",
+                            "wo_aux",
                             "cls",
                             "cls_T11_fold_vector.npy",
                         ),
@@ -89,6 +95,7 @@ def run_hyperopt(
                         os.path.join(
                             tuner_output_dir,
                             "matrices",
+                            "wo_aux",
                             "cls",
                             "cls_weights.csv",
                         ),

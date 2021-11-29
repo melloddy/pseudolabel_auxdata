@@ -23,7 +23,7 @@ def output_folder(tmpdir_factory) -> str:
 
 @fixture(scope="session")
 def params_folder(data_folder) -> str:
-    return os.path.join(data_folder, "sparsechem_params")
+    return os.path.join(data_folder, "tuner_params")
 
 
 @fixture(scope="session")
@@ -40,6 +40,7 @@ def config(
         t0_melloddy_path=os.path.join(melloddy_folder, "tuner_input", "T0.csv"),
         t1_melloddy_path=os.path.join(melloddy_folder, "tuner_input", "T1.csv"),
         t2_melloddy_path=os.path.join(melloddy_folder, "tuner_input", "T2.csv"),
+        t_catalogue_path=os.path.join(melloddy_folder, "tuner_input", "T_cat.csv"),
         t2_images_path=os.path.join(data_folder, "T2_images.csv"),
         t_images_features_path=os.path.join(data_folder, "T_image_features_std.csv"),
         key_json=os.path.join(params_folder, "key.json"),

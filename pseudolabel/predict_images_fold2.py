@@ -84,13 +84,26 @@ def find_best_model(hyperopt_folder: str, eval_metric: str = "roc_auc_score") ->
     return best_model
 
 
-def create_ysparse_fold2(tuner_output_images: str, intermediate_files_folder: str):
+def create_ysparse_fold2(
+    tuner_output_images: str,
+    intermediate_files_folder: str,
+):
     folds_path = os.path.join(
-        tuner_output_images, "matrices", "cls", "cls_T11_fold_vector.npy"
+        tuner_output_images,
+        "matrices",
+        "wo_aux",
+        "cls",
+        "cls_T11_fold_vector.npy",
     )
     folds = np.load(folds_path)
     # TODO check if npy is never used
-    t10_path = os.path.join(tuner_output_images, "matrices", "cls", "cls_T10_y.npz")
+    t10_path = os.path.join(
+        tuner_output_images,
+        "matrices",
+        "wo_aux",
+        "cls",
+        "cls_T10_y.npz",
+    )
     t10 = load_npz(t10_path).tocsr()
 
     out = lil_matrix(t10)
@@ -137,7 +150,13 @@ def run_sparsechem_predict(
     torch_device: str,
     logs_dir: Optional[str] = None,
 ):
-    x_path = os.path.join(tuner_output_dir, "matrices", "cls", "cls_T11_x_features.npz")
+    x_path = os.path.join(
+        tuner_output_dir,
+        "matrices",
+        "wo_aux",
+        "cls",
+        "cls_T11_x_features.npz",
+    )
     y_path = os.path.join(
         intermediate_files_folder, "y_sparse_step1_main_tasks_fold2.npy"
     )

@@ -52,6 +52,7 @@ class PseudolabelPipe:
                 t0_melloddy_path=self.config.t0_melloddy_path,
                 t1_melloddy_path=self.config.t1_melloddy_path,
                 t2_images_path=self.config.t2_images_path,
+                t_catalogue_path=self.config.t_catalogue_path,
                 tuner_images_input_folder=self.config.tuner_input_folder_image,
             )
             generation.synchronize_thresholds(

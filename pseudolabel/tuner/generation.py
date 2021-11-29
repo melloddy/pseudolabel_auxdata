@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 
 import numpy as np
 import pandas as pd
@@ -12,6 +13,7 @@ def find_overlap_with_melloddy(
     t0_melloddy_path: str,
     t1_melloddy_path: str,
     t2_images_path: str,
+    t_catalogue_path: str,
     tuner_images_input_folder: str,
 ):
 
@@ -36,6 +38,7 @@ def find_overlap_with_melloddy(
     # prepare T0
     t0_images = t0_melloddy[t0_melloddy.input_assay_id.isin(t1_images.input_assay_id)]
     t0_images.to_csv(os.path.join(tuner_images_input_folder, "T0.csv"), index=False)
+    shutil.copy(t_catalogue_path, os.path.join(tuner_images_input_folder, "T_cat.csv"))
 
 
 def synchronize_thresholds(

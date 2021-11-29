@@ -23,13 +23,13 @@ class PseudolabelConfig:
     t0_melloddy_path: str
     t1_melloddy_path: str
     t2_melloddy_path: str
+    t_catalogue_path: str
     t2_images_path: str
     t_images_features_path: str
 
     key_json: str
     parameters_json: str
     ref_hash_json: str
-
     sparsechem_path: str
 
     tuner_output_folder_baseline: str
@@ -125,6 +125,7 @@ class PseudolabelConfig:
         utils.check_file_exists(self.t0_melloddy_path)
         utils.check_file_exists(self.t1_melloddy_path)
         utils.check_file_exists(self.t2_melloddy_path)
+        utils.check_file_exists(self.t_catalogue_path)
 
         utils.check_file_exists(self.t2_images_path)
         utils.check_file_exists(self.t_images_features_path)

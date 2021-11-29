@@ -14,7 +14,7 @@ poetry lock
 ```
 
 Install [melloddy-tuner package](https://git.infra.melloddy.eu/wp1/data_prep)
-Use the following branch for sparsechem : [58-specifying-number-of-workers-for-data-loaders](https://git.infra.melloddy.eu/wp2/sparsechem/-/tree/58-specifying-number-of-workers-for-data-loaders)
+Please use the following branch to install sparsechem : [58-specifying-number-of-workers-for-data-loaders](https://git.infra.melloddy.eu/wp2/sparsechem/-/tree/58-specifying-number-of-workers-for-data-loaders)
 
 ## Pipeline Overview
 
@@ -63,13 +63,14 @@ The list of parameters to be defined are :
   - `t0_melloddy_path` : the path to the T0 Melloddy file
   - `t1_melloddy_path` : the path to the T1 Melloddy file
   - `t2_melloddy_path` : the path to the T2 Melloddy file
+  - `t_catalogue_path` : the path to the Catalogue file
   - `t2_images_path`: the path to T2-like csv file containing all image compounds
   - `t_images_features_path`: the path to the csv file containing image features and indexed with the input_compound_id
   - `tuner_output_folder_baseline` : the path to the folder containing the output of data preparation of Melloddy data using tuner
   - `output_folder_path`: the path to the output folder
 * **Melloddy tuner related parameters**
   - `key_json` : the path to json key file for Melloddy Tuner
-  -`parameters_json` : the path to json parameters file for Melloddy Tuner
+  - `parameters_json` : the path to json parameters file for Melloddy Tuner
   - `ref_hash_json` : the path to json reference hash file for Melloddy Tuner
 * **Sparsechem related parameters**
   - `torch_device`: device to use to run sparsechem CPU or GPU
