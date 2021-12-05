@@ -1,21 +1,27 @@
 ## Installation
 
-### Poetry
+ - Clone repository and checkout the pipeline branch
 
-[After installing poetry](https://python-poetry.org/docs/#installation),
- you can install the environment:
+- Create a clone of the melloddy_pipeline conda environment and activate it
+```bash
+conda create --name pseudolabel_pipeline --clone melloddy_pipeline
+conda activate pseudolabel_pipeline
+```
+
+ - Install pseudolabel package \
+To install pseudolabel package you could use pip or poetry in the cloned repository:
+
+````bash
+pip install .
+````
+or [after installing poetry](https://python-poetry.org/docs/#installation):
+
 ```bash
 poetry install
 ```
-
-Don't forget to update the lock file if the dependencies have change:
-```bash
-poetry lock
-```
-
-Install [melloddy-tuner package](https://git.infra.melloddy.eu/wp1/data_prep)
-
-Please use the following branch to install sparsechem : [58-specifying-number-of-workers-for-data-loaders](https://git.infra.melloddy.eu/wp2/sparsechem/-/tree/58-specifying-number-of-workers-for-data-loaders)
+this will allow to download the pseudolabel pipeline package in the active environment.
+- Install [melloddy-tuner package](https://git.infra.melloddy.eu/wp1/data_prep)
+- Install sparsechem using the following branch : [58-specifying-number-of-workers-for-data-loaders](https://git.infra.melloddy.eu/wp2/sparsechem/-/tree/58-specifying-number-of-workers-for-data-loaders)
 
 ## Pipeline Overview
 
@@ -74,7 +80,7 @@ The list of parameters to be defined are :
   - `parameters_json` : the path to json parameters file for Melloddy Tuner
   - `ref_hash_json` : the path to json reference hash file for Melloddy Tuner
 * **Sparsechem related parameters**
-  - `torch_device`: device to use to run sparsechem CPU or GPU
+  - `torch_device`: device to use to run sparsechem CPU or GPU (valid values: "cpu" or "cuda")
   - `max_cpu`: maximum number of CPU to use when CPU is selected
   - `dataloader_num_workers` : number of worker to use in dataloader in sparsechem (needs to be set to 0 when using CPU on macOS)
 * **Image model hyperparameter** : when not precised the default value of hyperparameters defined in *pseudolabel/constants.py* are used
