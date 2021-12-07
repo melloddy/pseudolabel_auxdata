@@ -80,7 +80,7 @@ def splitting_data(
     return preds_fva, labels, cdvi_fit, cdvi_eval
 
 
-def fit_cp(
+def fit_cp(  # noqa
     preds: np.ndarray,
     labels: np.ndarray,
     cdvi_fit: np.ndarray,
@@ -194,8 +194,13 @@ def fit_cp(
             idx_inact_both = np.intersect1d(idx_inact_labels, idx_uncertain_both)
             idx_act_both = np.intersect1d(idx_act_labels, idx_uncertain_both)
 
-            # NPV/PPV
-            if len(idx_certain_inact) > 0:
+            if len(idx_inact_labels) == 0 and len(idx_certain_inact) > 0:
+                validity_inact = np.sum(
+                    cp_test[idx_certain_inact]
+                    == labels_fte_col[idx_certain_inact].astype(str)
+                ) / len(cp_test[idx_certain_inact])
+                literature_validity_inact = np.nan
+            elif len(idx_certain_inact) > 0:
                 validity_inact = np.sum(
                     cp_test[idx_certain_inact]
                     == labels_fte_col[idx_certain_inact].astype(str)
@@ -208,11 +213,21 @@ def fit_cp(
                     )
                     + len(idx_inact_both)
                 ) / len(idx_inact_labels)
+            elif len(idx_inact_labels) == 0:
+                validity_inact = 0
+                literature_validity_inact = np.nan
             else:
                 validity_inact = 0
                 literature_validity_inact = len(idx_inact_both) / len(idx_inact_labels)
 
-            if len(idx_certain_act) > 0:
+            if len(idx_act_labels) == 0 and len(idx_certain_act) > 0:
+                validity_act = np.sum(
+                    cp_test[idx_certain_act]
+                    == labels_fte_col[idx_certain_act].astype(str)
+                ) / len(cp_test[idx_certain_act])
+                literature_validity_act = np.nan
+
+            elif len(idx_certain_act) > 0:
                 validity_act = np.sum(
                     cp_test[idx_certain_act]
                     == labels_fte_col[idx_certain_act].astype(str)
@@ -225,6 +240,9 @@ def fit_cp(
                     )
                     + len(idx_act_both)
                 ) / len(idx_act_labels)
+            elif len(idx_act_labels) == 0:
+                validity_act = 0
+                literature_validity_act = np.nan
             else:
                 validity_act = 0
                 literature_validity_act = len(idx_act_both) / len(idx_act_labels)
