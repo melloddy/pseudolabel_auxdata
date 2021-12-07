@@ -222,11 +222,25 @@ def replace_pseudolabels_w_labels(intermediate_files_folder: str):
         .reset_index()
     )
 
+    path = os.path.join(
+        intermediate_files_folder, "mapping", "baseline_image_model_task_mapping.csv"
+    )
+    t_parent_id = pd.read_csv(
+        path, usecols=["input_assay_id", "baseline_compliant_input_assay_id_image"]
+    ).rename(
+        {
+            "input_assay_id": "parent_assay_id",
+            "baseline_compliant_input_assay_id_image": "input_assay_id",
+        },
+        axis=1,
+    )
+
     t0_image["use_in_regression"] = False
     t0_image["direction"] = "high"
     t0_image["is_binary"] = True
     t0_image["catalog_assay_id"] = np.nan
-    t0_image["parent_assay_id"] = np.nan
+    t0_image = t0_image.merge(t_parent_id, on="input_assay_id", how="right")
+
     for i in range(1, 6):
         t0_image[f"expert_threshold_{i}"] = np.nan
 
