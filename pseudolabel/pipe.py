@@ -85,6 +85,7 @@ class PseudolabelPipe:
                 sparsechem_trainer_path=self.config.sparsechem_trainer_path,
                 tuner_output_dir=self.config.tuner_output_folder_image,
                 show_progress=self.config.show_progress,
+                resume_hyperopt=self.config.resume_hyperopt,
                 torch_device=self.config.torch_device,
             )
 

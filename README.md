@@ -59,7 +59,7 @@ Prepare the following files:
   - The folder containing the output of Melloddy-Tuner on the Melloddy dataset.
 * Image dataset
   - T2 that contains all compounds with images (make sure that the used *input_compound_id* match their analogs in your MELLODDY data when they exist). it will later be referred to as *T2_images.csv*
-  - A file with columns corresponding to image features (standardized) and indexed with the input_compound_id. The file preperation manual is available on box (https://app.box.com/file/852061069648?s=xc2iqr0nylz0p73tj1vfapr2apuuxyx5). In the scripts it's referred to as *T_image_features_std.csv*
+  - A file with columns corresponding to image features (standardized) and indexed with the input_compound_id. The file preparation manual is available on box (https://app.box.com/file/852061069648?s=xc2iqr0nylz0p73tj1vfapr2apuuxyx5). In the scripts it's referred to as *T_image_features_std.csv*
 
 
 ### Step 2: Write the configuration file
@@ -83,11 +83,12 @@ The list of parameters to be defined are :
   - `torch_device`: device to use to run sparsechem CPU or GPU (valid values: "cpu" or "cuda")
   - `max_cpu`: maximum number of CPU to use when CPU is selected
   - `dataloader_num_workers` : number of worker to use in dataloader in sparsechem (needs to be set to 0 when using CPU on macOS)
-* **Image model hyperparameter** : when not precised the default value of hyperparameters defined in *pseudolabel/constants.py* are used
+* **Image model hyperparameter** : when not specified the default value of hyperparameters defined in *pseudolabel/constants.py* are used
   - `imagemodel_hidden_size` : list of hidden layers' sizes for image-based model's hyperparameter scan. A list of string for each hidden size layer. (*Ex: [["125"],["250","125","67"]]* )
   - `imagemodel_epochs_lr_steps`: list of tuple of number of epochs and corresponding learning rates for image-based model's hyperparameter scan
   - `imagemodel_dropouts`: list of number of dropouts for image-based model's hyperparameter scan
-  - `show_progress` : when set true, the progess of the image-based model's hyperparameter scan is shown in the logs
+  - `show_progress` : when set to true, the progress of the image-based model's hyperparameter scan is shown in the logs
+  - `resume_hyperopt` : when set to true, the hyperparameters that are already explored (whose corresponding run's folder exists) are skipped.
 * `pseudolabel_threshold`: threshold to use to filter pseudolabels with low confidence, it should be greater to the minimum threshold 0.8. (default value : 0.9)
 
 ### Step 3: Run pipeline
