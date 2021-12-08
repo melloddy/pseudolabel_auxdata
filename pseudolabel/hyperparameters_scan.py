@@ -19,6 +19,7 @@ def run_hyperopt(
     sparsechem_trainer_path: str,
     tuner_output_dir: str,
     torch_device: str,
+    resume_hyperopt: bool = True,
     show_progress: bool = True,
 ):
 
@@ -54,6 +55,8 @@ def run_hyperopt(
                 # Create script folder and create script
 
                 current_model_dir = os.path.join(hp_output_dir, run_name)
+                if resume_hyperopt and os.path.isdir(current_model_dir):
+                    continue
                 os.makedirs(current_model_dir, exist_ok=True)
 
                 log_file = os.path.join(current_model_dir, "log.txt")

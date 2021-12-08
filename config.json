@@ -17,5 +17,6 @@
   "imagemodel_epochs_lr_steps" : [[5, 3]],
   "imagemodel_dropouts": [0.6],
   "show_progress": true,
+  "resume_hyperopt": true,
   "pseudolabel_threshold": 0.95
 }

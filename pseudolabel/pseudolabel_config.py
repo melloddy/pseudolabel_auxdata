@@ -50,6 +50,7 @@ class PseudolabelConfig:
     imagemodel_dropouts: List[float] = field(default_factory=DEFAULT_DROPOUTS)
 
     show_progress: bool = True
+    resume_hyperopt: bool = True
 
     @property
     def t8c_baseline(self) -> str:
