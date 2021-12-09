@@ -21,6 +21,8 @@ def run_hyperopt(
     torch_device: str,
     resume_hyperopt: bool = True,
     show_progress: bool = True,
+    validation_fold: int,
+    test_fold : int
 ):
 
     distqdm = not show_progress
@@ -129,9 +131,9 @@ def run_hyperopt(
                         "--batch_ratio",
                         "0.02",
                         "--fold_va",
-                        "2",
+                        str(validation_fold),
                         "--fold_te",
-                        "0",
+                        str(test_fold),
                         "--verbose",
                         "1",
                         "--save_model",
