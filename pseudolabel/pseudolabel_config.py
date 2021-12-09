@@ -170,7 +170,8 @@ class PseudolabelConfig:
         self.__check_files_exist()
         self.__t_images_check()
         self.__check_threshold()
-        self.__check_hyperopt_subset_ind()
+        if self.hyperopt_subset_ind:
+            self.__check_hyperopt_subset_ind()
 
     @classmethod
     def load_config(cls, json_path: str) -> PseudolabelConfig:
