@@ -48,6 +48,8 @@ def config(
         ref_hash_json=os.path.join(params_folder, "ref_hash.json"),
         tuner_output_folder_baseline=os.path.join(melloddy_folder, "tuner_output"),
         output_folder_path=output_folder,
+        validation_fold=4,
+        test_fold=0,
         sparsechem_path=os.getenv(
             "SPARSECHEM_PATH", "/Users/tmp2/Desktop/iktos/sparsechem"
         ),  # To set this from the CI
@@ -57,5 +59,5 @@ def config(
             (5, 3),
         ],
         imagemodel_dropouts=[0.6],
-        pseudolabel_threshold=0.95
+        pseudolabel_threshold=0.95,
     )
