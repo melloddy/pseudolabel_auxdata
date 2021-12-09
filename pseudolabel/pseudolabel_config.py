@@ -54,6 +54,7 @@ class PseudolabelConfig:
 
     show_progress: bool = True
     resume_hyperopt: bool = True
+    hyperopt_subset_ind: Tuple = None
 
     @property
     def t8c_baseline(self) -> str:
@@ -158,11 +159,18 @@ class PseudolabelConfig:
             f" value {self.min_threshold}"
         )
 
+    def __check_hyperopt_subset_ind(self):
+        assert self.hyperopt_subset_ind[0] < self.hyperopt_subset_ind[1], (
+            f"Subset's beginning index for hyperoptimization {self.hyperopt_subset_ind[0]} should be smaller than the subset's end index"
+            f"{self.hyperopt_subset_ind[1]}"
+        )
+
     def check_data(self):
         # TODO Add more checks
         self.__check_files_exist()
         self.__t_images_check()
         self.__check_threshold()
+        self.__check_hyperopt_subset_ind()
 
     @classmethod
     def load_config(cls, json_path: str) -> PseudolabelConfig:

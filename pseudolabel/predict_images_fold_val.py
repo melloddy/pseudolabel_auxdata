@@ -85,7 +85,7 @@ def find_best_model(hyperopt_folder: str, eval_metric: str = "roc_auc_score") ->
 
 
 def create_ysparse_fold_val(
-    tuner_output_images: str, intermediate_files_folder: str, validation_fold: str
+    tuner_output_images: str, intermediate_files_folder: str, validation_fold: int
 ):
     folds_path = os.path.join(
         tuner_output_images,

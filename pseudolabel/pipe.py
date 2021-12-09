@@ -89,6 +89,7 @@ class PseudolabelPipe:
                 show_progress=self.config.show_progress,
                 resume_hyperopt=self.config.resume_hyperopt,
                 torch_device=self.config.torch_device,
+                hyperopt_subset_ind=self.config.hyperopt_subset_ind,
             )
 
         if starting_ind <= 2:
