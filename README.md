@@ -89,6 +89,7 @@ The list of parameters to be defined are :
   - `imagemodel_dropouts`: list of number of dropouts for image-based model's hyperparameter scan
   - `show_progress` : when set to true, the progress of the image-based model's hyperparameter scan is shown in the logs
   - `resume_hyperopt` : when set to true, the hyperparameters that are already explored (whose corresponding run's folder exists) are skipped.
+  - `hyperopt_subset_ind` : Tuple containing beginning and end indices of the subset of hyperparameters to include in the hyperoptimization scan. The default value of the argument is **None** and this case all hyperparameters are included in the scan.
 * `pseudolabel_threshold`: threshold to use to filter pseudolabels with low confidence, it should be greater to the minimum threshold 0.8. (default value : 0.9)
 
 ### Step 3: Run pipeline

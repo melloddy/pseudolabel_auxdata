@@ -23,6 +23,7 @@ def run_hyperopt(
     test_fold: int,
     resume_hyperopt: bool = True,
     show_progress: bool = True,
+    hyperopt_subset_ind: Tuple = None,
 ):
 
     distqdm = not show_progress
@@ -50,6 +51,10 @@ def run_hyperopt(
             ):
                 i += 1
                 num = str(i).zfill(3)
+                if hyperopt_subset_ind and not (
+                    hyperopt_subset_ind[0] <= i < hyperopt_subset_ind[1]
+                ):
+                    continue
 
                 # Remove spaces in hidden layers (for file name)
                 hidden_name = "-".join(hidden)
@@ -107,7 +112,7 @@ def run_hyperopt(
                         "--hidden_sizes",
                         *hidden,
                         "--dropouts_trunk",
-                        str(dropout),
+                        *[str(dropout) for i in hidden],
                         "--non_linearity",
                         "relu",
                         "--input_transform",
