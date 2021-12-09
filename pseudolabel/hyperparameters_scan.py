@@ -22,8 +22,7 @@ def run_hyperopt(
     validation_fold: int,
     test_fold: int,
     resume_hyperopt: bool = True,
-    show_progress: bool = True
-
+    show_progress: bool = True,
 ):
 
     distqdm = not show_progress

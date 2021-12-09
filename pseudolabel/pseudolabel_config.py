@@ -35,6 +35,9 @@ class PseudolabelConfig:
     tuner_output_folder_baseline: str
     output_folder_path: str
 
+    validation_fold: int
+    test_fold: int
+
     max_cpu: int = multiprocessing.cpu_count() - 1
     dataloader_num_workers: int = multiprocessing.cpu_count() - 1
     torch_device: str = "cuda" if torch.cuda.is_available() else "cpu"
@@ -49,8 +52,6 @@ class PseudolabelConfig:
     )
     imagemodel_dropouts: List[float] = field(default_factory=DEFAULT_DROPOUTS)
 
-    validation_fold: int
-    test_fold: int
     show_progress: bool = True
     resume_hyperopt: bool = True
 
