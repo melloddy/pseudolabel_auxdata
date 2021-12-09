@@ -49,11 +49,10 @@ class PseudolabelConfig:
     )
     imagemodel_dropouts: List[float] = field(default_factory=DEFAULT_DROPOUTS)
 
-    show_progress: bool = True
-    resume_hyperopt: bool = True
     validation_fold : int
     test_fold : int
-
+    show_progress: bool = True
+    resume_hyperopt: bool = True
 
     @property
     def t8c_baseline(self) -> str:
@@ -83,7 +82,6 @@ class PseudolabelConfig:
         )
         return path
 
-   
     @property
     def tuner_output_folder_image(self) -> str:
         path = os.path.join(self.output_folder_path, IMAGE_MODEL_DATA, "tuner_output")

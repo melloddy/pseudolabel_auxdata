@@ -19,10 +19,11 @@ def run_hyperopt(
     sparsechem_trainer_path: str,
     tuner_output_dir: str,
     torch_device: str,
-    resume_hyperopt: bool = True,
-    show_progress: bool = True,
     validation_fold: int,
-    test_fold : int
+    test_fold : int,
+    resume_hyperopt: bool = True,
+    show_progress: bool = True
+
 ):
 
     distqdm = not show_progress

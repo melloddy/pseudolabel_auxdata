@@ -84,11 +84,11 @@ class PseudolabelPipe:
                 hp_output_dir=self.config.hyperopt_output_folder,
                 sparsechem_trainer_path=self.config.sparsechem_trainer_path,
                 tuner_output_dir=self.config.tuner_output_folder_image,
+                validation_fold=self.config.validation_fold,
+                test_fold=self.config.test_fold,
                 show_progress=self.config.show_progress,
                 resume_hyperopt=self.config.resume_hyperopt,
                 torch_device=self.config.torch_device,
-                validation_fold=self.config.validation_fold,
-                test_fold=self.config.test_fold,
             )
 
         if starting_ind <= 2:
@@ -101,7 +101,7 @@ class PseudolabelPipe:
             predict_images_fold_val.create_ysparse_fold_val(
                 tuner_output_images=self.config.tuner_output_folder_image,
                 intermediate_files_folder=self.config.intermediate_files_folder,
-                validation_fold = self.config.validation_fold,
+                validation_fold=self.config.validation_fold,
             )
 
             LOGGER.info("Predict images fold val for fitting conformal predictors")
