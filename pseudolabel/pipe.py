@@ -6,7 +6,7 @@ from pseudolabel import (
     cp_fitting,
     hyperparameters_scan,
     predict_all_images,
-    predict_images_fold2,
+    predict_images_fold_val,
     t_pseudolabels_generation,
 )
 from pseudolabel.pseudolabel_config import PseudolabelConfig
@@ -84,6 +84,8 @@ class PseudolabelPipe:
                 hp_output_dir=self.config.hyperopt_output_folder,
                 sparsechem_trainer_path=self.config.sparsechem_trainer_path,
                 tuner_output_dir=self.config.tuner_output_folder_image,
+                validation_fold=self.config.validation_fold,
+                test_fold=self.config.test_fold,
                 show_progress=self.config.show_progress,
                 resume_hyperopt=self.config.resume_hyperopt,
                 torch_device=self.config.torch_device,
@@ -91,19 +93,20 @@ class PseudolabelPipe:
 
         if starting_ind <= 2:
             LOGGER.info(
-                "STEP 3/5: Selecting best hyperparameter and generating y sparse fold2 for inference"
+                "STEP 3/5: Selecting best hyperparameter and generating y sparse fold val for inference"
             )
-            best_model = predict_images_fold2.find_best_model(
+            best_model = predict_images_fold_val.find_best_model(
                 hyperopt_folder=self.config.hyperopt_output_folder
             )
-            predict_images_fold2.create_ysparse_fold2(
+            predict_images_fold_val.create_ysparse_fold_val(
                 tuner_output_images=self.config.tuner_output_folder_image,
                 intermediate_files_folder=self.config.intermediate_files_folder,
+                validation_fold=self.config.validation_fold,
             )
 
-            LOGGER.info("Predict images fold 2 for fitting conformal predictors")
+            LOGGER.info("Predict images fold val for fitting conformal predictors")
 
-            predict_images_fold2.run_sparsechem_predict(
+            predict_images_fold_val.run_sparsechem_predict(
                 sparsechem_predictor_path=self.config.sparsechem_predictor_path,
                 tuner_output_dir=self.config.tuner_output_folder_image,
                 best_model=best_model,
@@ -118,6 +121,7 @@ class PseudolabelPipe:
             preds_fva, labels, cdvi_fit, cdvi_eval = cp_fitting.splitting_data(
                 tuner_output_images=self.config.tuner_output_folder_image,
                 intermediate_files_folder=self.config.intermediate_files_folder,
+                fold_va=self.config.validation_fold,
             )
 
             LOGGER.info("Fitting conformal predictors ")
@@ -147,7 +151,7 @@ class PseudolabelPipe:
 
             LOGGER.info("Generating predictions on all image compounds")
 
-            best_model = predict_images_fold2.find_best_model(
+            best_model = predict_images_fold_val.find_best_model(
                 hyperopt_folder=self.config.hyperopt_output_folder
             )
 
