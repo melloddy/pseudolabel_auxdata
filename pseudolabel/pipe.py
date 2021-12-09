@@ -121,7 +121,7 @@ class PseudolabelPipe:
             preds_fva, labels, cdvi_fit, cdvi_eval = cp_fitting.splitting_data(
                 tuner_output_images=self.config.tuner_output_folder_image,
                 intermediate_files_folder=self.config.intermediate_files_folder,
-                fold_va=self.config.validation_fold
+                fold_va=self.config.validation_fold,
             )
 
             LOGGER.info("Fitting conformal predictors ")

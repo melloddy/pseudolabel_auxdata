@@ -49,8 +49,8 @@ class PseudolabelConfig:
     )
     imagemodel_dropouts: List[float] = field(default_factory=DEFAULT_DROPOUTS)
 
-    validation_fold : int
-    test_fold : int
+    validation_fold: int
+    test_fold: int
     show_progress: bool = True
     resume_hyperopt: bool = True
 

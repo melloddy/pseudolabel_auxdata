@@ -20,7 +20,7 @@ def run_hyperopt(
     tuner_output_dir: str,
     torch_device: str,
     validation_fold: int,
-    test_fold : int,
+    test_fold: int,
     resume_hyperopt: bool = True,
     show_progress: bool = True
 
