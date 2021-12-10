@@ -79,7 +79,9 @@ def run_hyperopt(
                 # Create script folder and create script
 
                 current_model_dir = os.path.join(hp_output_dir, run_name)
-                if resume_hyperopt and os.path.isdir(current_model_dir):
+                current_model_file = os.path.join(current_model_dir, IMAGE_MODEL_NAME + '.json')
+
+                if resume_hyperopt and os.path.isfile(current_model_file):
                     continue
                 os.makedirs(current_model_dir, exist_ok=True)
 
