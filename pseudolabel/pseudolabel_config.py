@@ -128,8 +128,12 @@ class PseudolabelConfig:
     @property
     def hyperopt_size(self) -> int:
         """ returns the number of expected hyperopt models, here it assumes all x all grid search """
-        return len(self.imagemodel_hidden_size) * len(self.imagemodel_epochs_lr_steps) * len(self.imagemodel_dropouts)
-    
+        return (
+            len(self.imagemodel_hidden_size)
+            * len(self.imagemodel_epochs_lr_steps)
+            * len(self.imagemodel_dropouts)
+        )
+
     def __check_files_exist(self):
         utils.check_file_exists(self.t0_melloddy_path)
         utils.check_file_exists(self.t1_melloddy_path)
@@ -146,7 +150,7 @@ class PseudolabelConfig:
         utils.check_file_exists(self.key_json)
         utils.check_file_exists(self.parameters_json)
         utils.check_file_exists(self.ref_hash_json)
-    
+
     def __t_images_check(self):
         t_images = pd.read_csv(self.t_images_features_path)
         assert (
@@ -168,12 +172,12 @@ class PseudolabelConfig:
             f"Subset's beginning index for hyperoptimization {self.hyperopt_subset_ind[0]} should be smaller than the subset's end index"
             f"{self.hyperopt_subset_ind[1]}"
         )
-        assert self.hyperopt_subset_ind[0] >= 1, (
-            f"Subset's beginning index incorrect, needs to be >= 1"
-        )
-        assert self.hyperopt_subset_ind[1] <= self.hyperopt_size, (
-            f"Subset's end index incorrect, needs to be <= {self.hyperopt_size}"
-        )
+        assert (
+            self.hyperopt_subset_ind[0] >= 1
+        ), "Subset's beginning index incorrect, needs to be >= 1"
+        assert (
+            self.hyperopt_subset_ind[1] <= self.hyperopt_size
+        ), f"Subset's end index incorrect, needs to be <= {self.hyperopt_size}"
 
     def check_data(self):
         # TODO Add more checks

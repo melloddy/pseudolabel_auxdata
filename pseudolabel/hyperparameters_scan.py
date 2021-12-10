@@ -1,15 +1,16 @@
+import glob
 import logging
 import os
 import subprocess
 from typing import List, Tuple
-import glob
+
 from tqdm import tqdm
 
 from pseudolabel.constants import IMAGE_MODEL_NAME
 from pseudolabel.errors import HyperOptError
-#from pseudolabel.errors import HyperOptCompletionError
 
 LOGGER = logging.getLogger(__name__)
+
 
 def hyperopt_completion_status(
     hyperopt_size: int,
@@ -17,7 +18,7 @@ def hyperopt_completion_status(
 ):
     models = glob.glob(os.path.join(hp_output_dir, "*", "*.json"))
 
-    if len(models) < hyperopt_size: 
+    if len(models) < hyperopt_size:
         return False
     else:
         return True
@@ -74,7 +75,9 @@ def run_hyperopt(
                 # Create script folder and create script
 
                 current_model_dir = os.path.join(hp_output_dir, run_name)
-                current_model_file = os.path.join(current_model_dir, IMAGE_MODEL_NAME + '.json')
+                current_model_file = os.path.join(
+                    current_model_dir, IMAGE_MODEL_NAME + ".json"
+                )
 
                 if resume_hyperopt and os.path.isfile(current_model_file):
                     continue
