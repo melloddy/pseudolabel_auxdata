@@ -19,6 +19,9 @@ def hyperopt_completion_status(
     models = glob.glob(os.path.join(hp_output_dir, "*", "*.json"))
 
     if len(models) < hyperopt_size:
+        LOGGER.warning(
+            f"Expected {hyperopt_size} models in {hp_output_dir}, but found only {len(models)}."
+        )
         return False
     else:
         return True
