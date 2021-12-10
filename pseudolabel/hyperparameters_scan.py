@@ -7,25 +7,20 @@ from tqdm import tqdm
 
 from pseudolabel.constants import IMAGE_MODEL_NAME
 from pseudolabel.errors import HyperOptError
-from pseudolabel.errors import HyperOptCompletionError
+#from pseudolabel.errors import HyperOptCompletionError
 
 LOGGER = logging.getLogger(__name__)
 
 def hyperopt_completion_status(
-    epochs_lr_steps: List[Tuple[int, int]],
-    hidden_sizes: List[List[str]],
-    dropouts: List[float],
+    hyperopt_size: int,
     hp_output_dir: str,
 ):
-
-    # assumes all x all
     models = glob.glob(os.path.join(hp_output_dir, "*", "*.json"))
-    num_expected = len(epochs_lr_steps) * len(hidden_sizes) * len(dropouts)
 
-    # a more gracefull alternative would be to stip the run here instead of raising an error
-    # as this can tpyically be triggered by batched hyperopt runs
-    if len(models) < num_expected: 
-        raise HyperOptCompletionError(f"Can't find all expected models in {hp_output_dir}") 
+    if len(models) < hyperopt_size: 
+        return False
+    else:
+        return True
 
 
 def run_hyperopt(

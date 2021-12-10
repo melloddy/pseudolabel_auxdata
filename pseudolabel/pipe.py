@@ -91,12 +91,12 @@ class PseudolabelPipe:
                 torch_device=self.config.torch_device,
                 hyperopt_subset_ind=self.config.hyperopt_subset_ind,
             )
-            hyperparameters_scan.hyperopt_completion_status(
-                epochs_lr_steps=self.config.imagemodel_epochs_lr_steps,
-                hidden_sizes=self.config.imagemodel_hidden_size,
-                dropouts=self.config.imagemodel_dropouts,
+            if not hyperparameters_scan.hyperopt_completion_status(
+                hyperopt_size=self.config.hyperopt_size,
                 hp_output_dir=self.config.hyperopt_output_folder,
-            )
+            ): 
+                LOGGER.info("Hyperopt not complete yet - stopping here.")
+                quit()
 
         if starting_ind <= 2:
             LOGGER.info(
