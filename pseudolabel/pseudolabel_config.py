@@ -51,7 +51,6 @@ class PseudolabelConfig:
         default_factory=DEFAULT_EPOCHS_LR_STEPS
     )
     imagemodel_dropouts: List[float] = field(default_factory=DEFAULT_DROPOUTS)
-
     show_progress: bool = True
     resume_hyperopt: bool = True
     hyperopt_subset_ind: Tuple = None
@@ -126,6 +125,15 @@ class PseudolabelConfig:
     def sparsechem_predictor_path(self) -> str:
         return os.path.join(self.sparsechem_path, "examples", "chembl", "predict.py")
 
+    @property
+    def hyperopt_size(self) -> int:
+        """ returns the number of expected hyperopt models, here it assumes all x all grid search """
+        return (
+            len(self.imagemodel_hidden_size)
+            * len(self.imagemodel_epochs_lr_steps)
+            * len(self.imagemodel_dropouts)
+        )
+
     def __check_files_exist(self):
         utils.check_file_exists(self.t0_melloddy_path)
         utils.check_file_exists(self.t1_melloddy_path)
@@ -164,6 +172,12 @@ class PseudolabelConfig:
             f"Subset's beginning index for hyperoptimization {self.hyperopt_subset_ind[0]} should be smaller than the subset's end index"
             f"{self.hyperopt_subset_ind[1]}"
         )
+        assert (
+            self.hyperopt_subset_ind[0] >= 1
+        ), "Subset's beginning index incorrect, needs to be >= 1"
+        assert (
+            self.hyperopt_subset_ind[1] <= self.hyperopt_size
+        ), f"Subset's end index incorrect, needs to be <= {self.hyperopt_size}"
 
     def check_data(self):
         # TODO Add more checks
