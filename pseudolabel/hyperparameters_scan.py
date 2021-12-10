@@ -69,7 +69,7 @@ def run_hyperopt(
                 i += 1
                 num = str(i).zfill(3)
                 if hyperopt_subset_ind and not (
-                    hyperopt_subset_ind[0] <= i < hyperopt_subset_ind[1]
+                    hyperopt_subset_ind[0] <= i <= hyperopt_subset_ind[1]
                 ):
                     continue
 
