@@ -4,11 +4,13 @@ from typing import Optional
 
 from pseudolabel import (
     cp_fitting,
+    hti_cnn,
     hyperparameters_scan,
     predict_all_images,
     predict_images_fold2,
     t_pseudolabels_generation,
 )
+from pseudolabel.hti_cnn import create_featurizer_config
 from pseudolabel.pseudolabel_config import PseudolabelConfig
 from pseudolabel.tuner import generation, tuner_tools
 
@@ -24,6 +26,10 @@ class PseudolabelPipe:
             "fit_conformal_predictors",
             "generate_pseudolabels",
             "generate_T_files_pseudolabels",
+        ]
+        self.hti_steps = [
+            "train_cnn",
+            "featurize",
         ]
         if config_file:
             self.load_config(config_file)
@@ -45,7 +51,6 @@ class PseudolabelPipe:
         self.run_full_pipe(starting_step_ind)
 
     def run_full_pipe(self, starting_ind=0):
-        # TODO Add step number/steps
         if starting_ind <= 0:
             LOGGER.info("STEP 1/5: Starting tuner preprocessing")
             generation.find_overlap_with_melloddy(
@@ -196,3 +201,35 @@ class PseudolabelPipe:
 
             LOGGER.info("T files for pseudolabels are generated")
         LOGGER.info("Pipeline finished")
+
+    def run_hti_cnn(self, step_ind=-1):
+        if step_ind == -1 or step_ind == 0:
+            LOGGER.info("Step 1/2 : Training CNN model")
+            hti_cnn.run_hti(
+                hti_config=self.config.hti_config_file,
+                torch_device=self.config.torch_device,
+                dataloader_num_workers=self.config.dataloader_num_workers,
+                run_name=self.config.hti_run_name,
+                logs_dir=self.config.log_dir,
+            )
+        if step_ind == -1 or step_ind == 1:
+            LOGGER.info("Step 2/2 : featurize using CNN model")
+            featurizer_config_file = create_featurizer_config(
+                self.config.hti_config_file
+            )
+            hti_cnn.run_hti_featurizer(
+                hti_config=featurizer_config_file,
+                torch_device=self.config.torch_device,
+                dataloader_num_workers=self.config.dataloader_num_workers,
+                checkpoint_dir=self.config.checkpoint_dir,
+                logs_dir=self.config.log_dir,
+            )
+
+    def run_hti_cnn_step(self, hti_step_name: str):
+        if hti_step_name not in self.hti_steps:
+            raise ValueError(
+                f"{hti_step_name} is not a valid step, please choose one on the following : "
+                f"{self.hti_steps}"
+            )
+        step_ind = self.hti_steps.index(hti_step_name)
+        self.run_hti_cnn(step_ind)

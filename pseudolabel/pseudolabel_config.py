@@ -4,6 +4,7 @@ import json
 import multiprocessing
 import os
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import List, Tuple
 
 import pandas as pd
@@ -20,6 +21,9 @@ from pseudolabel.constants import (
 
 @dataclass
 class PseudolabelConfig:
+    hti_config_file: str
+    hti_run_name: str
+
     t0_melloddy_path: str
     t1_melloddy_path: str
     t2_melloddy_path: str
@@ -50,6 +54,20 @@ class PseudolabelConfig:
     imagemodel_dropouts: List[float] = field(default_factory=DEFAULT_DROPOUTS)
 
     show_progress: bool = True
+
+    @property
+    def checkpoint_dir(self) -> str:
+        config = json.load(open(self.hti_config_file))
+        checkpoint_dir = os.path.join(
+            config["workspace"], config["name"], self.hti_run_name, "checkpoints"
+        )
+        checkpoint_list = [str(i) for i in Path(checkpoint_dir).glob("*.pth.tar")]
+        if len(checkpoint_list) != 0:
+            return os.path.join(checkpoint_dir, checkpoint_list[0])
+        else:
+            raise FileNotFoundError(
+                f"No checkpoint files found in the precised run folder {checkpoint_dir}"
+            )
 
     @property
     def t8c_baseline(self) -> str:
@@ -122,6 +140,8 @@ class PseudolabelConfig:
         return os.path.join(self.sparsechem_path, "examples", "chembl", "predict.py")
 
     def __check_files_exist(self):
+        utils.check_file_exists(self.hti_config_file)
+
         utils.check_file_exists(self.t0_melloddy_path)
         utils.check_file_exists(self.t1_melloddy_path)
         utils.check_file_exists(self.t2_melloddy_path)

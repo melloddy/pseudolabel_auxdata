@@ -27,3 +27,14 @@ def run_pipe(config_file: str):
 def run_parital_pipe(config_file: str, starting_step: str):
     pseudolabel_pipe = pipe.PseudolabelPipe(config_file)
     pseudolabel_pipe.run_partial_pipe(starting_step=starting_step)
+
+
+@click.command()
+@click.option("-c", "--config-file", required=True, type=str)
+@click.option("-s", "--step", required=False, type=str)
+def run_hti_cnn(config_file: str, step: str = None):
+    pseudolabel_pipe = pipe.PseudolabelPipe(config_file)
+    if step:
+        pseudolabel_pipe.run_hti_cnn_step(step)
+    else:
+        pseudolabel_pipe.run_hti_cnn()
