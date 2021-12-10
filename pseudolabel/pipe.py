@@ -157,7 +157,12 @@ class PseudolabelPipe:
             )
 
             LOGGER.info("Generating predictions on all image compounds")
-
+            if not hyperparameters_scan.hyperopt_completion_status(
+                hyperopt_size=self.config.hyperopt_size,
+                hp_output_dir=self.config.hyperopt_output_folder,
+            ):
+                LOGGER.info("Hyperopt not complete yet - stopping here.")
+                quit()
             best_model = predict_images_fold_val.find_best_model(
                 hyperopt_folder=self.config.hyperopt_output_folder
             )
