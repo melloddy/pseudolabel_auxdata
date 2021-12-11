@@ -21,7 +21,7 @@ poetry install
 ```
 this will allow to download the pseudolabel pipeline package in the active environment.
 - Install [melloddy-tuner package](https://git.infra.melloddy.eu/wp1/data_prep)
-- Install sparsechem using the following branch : [58-specifying-number-of-workers-for-data-loaders](https://git.infra.melloddy.eu/wp2/sparsechem/-/tree/58-specifying-number-of-workers-for-data-loaders)
+- Install sparsechem using the hybrid model extension branch : [hybrid_model_extension](https://git.infra.melloddy.eu/wp2/sparsechem/-/tree/hybrid_model_extension)
 
 ## Pipeline Overview
 
