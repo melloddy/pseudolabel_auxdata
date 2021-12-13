@@ -346,10 +346,7 @@ def apply_cp_aux(
     intermediate_files: str,
     eps: float = 0.05,
 ):
-    pred_file_list = glob.glob(os.path.join(
-        intermediate_files, "pred_cpmodel_step2_inference_allcmpds_batch_*-class.npy"
-        )
-    )
+    pred_file_list = glob.glob(os.path.join(intermediate_files, "pred_cpmodel_step2_inference_allcmpds_batch_*-class.npy"))
 
     pred_batches = []
     for ind in range(len(pred_file_list)):
