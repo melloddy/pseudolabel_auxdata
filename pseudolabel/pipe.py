@@ -154,7 +154,7 @@ class PseudolabelPipe:
                 t_images_features_path=self.config.t_images_features_path,
                 analysis_folder=self.config.analysis_folder,
                 intermediate_files_folder=self.config.intermediate_files_folder,
-                x_ypsparse_batch_size = self.config.x_ysparse_batch_size
+                batch_size = self.config.x_ysparse_batch_size
             )
 
             LOGGER.info("Generating predictions on all image compounds")
