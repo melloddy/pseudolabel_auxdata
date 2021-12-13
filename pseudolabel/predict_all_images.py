@@ -68,7 +68,8 @@ def create_x_ysparse_all_images(
             ),
             matrix=csr_matrix(Y_to_pred),
         )
-        assert Y_to_pred.shape[0] == x_arr.iloc[lower_lim:upper_lim].shape[0], "X and Y batches dims are differ"
+        assert Y_to_pred.shape[0] == x_arr.iloc[lower_lim:upper_lim].shape[0], 
+        "X and Y batches dims are differ"
         del data, rows, cols
         save_npz(
             file=os.path.join(
