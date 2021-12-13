@@ -134,7 +134,7 @@ class PseudolabelConfig:
             * len(self.imagemodel_epochs_lr_steps)
             * len(self.imagemodel_dropouts)
         )
-    
+
     def __check_files_exist(self):
         utils.check_file_exists(self.t0_melloddy_path)
         utils.check_file_exists(self.t1_melloddy_path)
