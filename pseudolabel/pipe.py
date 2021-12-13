@@ -27,10 +27,7 @@ class PseudolabelPipe:
             "generate_pseudolabels",
             "generate_T_files_pseudolabels",
         ]
-        self.hti_steps = [
-            "train_cnn",
-            "featurize",
-        ]
+        self.hti_steps = ["train_cnn", "featurize", "process_features"]
         if config_file:
             self.load_config(config_file)
 
@@ -204,7 +201,7 @@ class PseudolabelPipe:
 
     def run_hti_cnn(self, step_ind=-1):
         if step_ind == -1 or step_ind == 0:
-            LOGGER.info("Step 1/2 : Training CNN model")
+            LOGGER.info("Step 1/3 : Training CNN model")
             hti_cnn.run_hti(
                 hti_config=self.config.hti_config_file,
                 torch_device=self.config.torch_device,
@@ -213,7 +210,7 @@ class PseudolabelPipe:
                 logs_dir=self.config.log_dir,
             )
         if step_ind == -1 or step_ind == 1:
-            LOGGER.info("Step 2/2 : featurize using CNN model")
+            LOGGER.info("Step 2/3 : featurize using CNN model")
             featurizer_config_file = create_featurizer_config(
                 self.config.hti_config_file
             )
@@ -221,8 +218,14 @@ class PseudolabelPipe:
                 hti_config=featurizer_config_file,
                 torch_device=self.config.torch_device,
                 dataloader_num_workers=self.config.dataloader_num_workers,
-                checkpoint_dir=self.config.checkpoint_dir,
+                checkpoint_dir=self.config.hti_checkpoint_dir,
                 logs_dir=self.config.log_dir,
+            )
+        if step_ind == -1 or step_ind == 2:
+            LOGGER.info("Step 3/3 : processing outputted features")
+            hti_cnn.preprocess_features(
+                results_dir=self.config.hti_results_dir,
+                hti_index_file=self.config.hti_index_file,
             )
 
     def run_hti_cnn_step(self, hti_step_name: str):

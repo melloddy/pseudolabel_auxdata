@@ -3,6 +3,8 @@ import os
 import subprocess
 from typing import Optional
 
+import numpy as np
+import pandas as pd
 import torch
 
 from pseudolabel.errors import HTIError
@@ -33,6 +35,8 @@ def run_hti(
     elif torch_device == "gpu":
         gpu_ids = [gpu_id for gpu_id in range(torch.cuda.device_count())]
         device_id = gpu_ids[0]
+
+    os.makedirs(logs_dir, exist_ok=True)
 
     proc = subprocess.run(
         [
@@ -70,6 +74,8 @@ def run_hti_featurizer(
         gpu_ids = [gpu_id for gpu_id in range(torch.cuda.device_count())]
         device_id = gpu_ids[0]
 
+    os.makedirs(logs_dir, exist_ok=True)
+
     proc = subprocess.run(
         [
             "hti-cnn-feature",
@@ -90,3 +96,35 @@ def run_hti_featurizer(
 
     if proc.returncode != 0:
         raise HTIError(f"HTI CNN failed with: \n {proc.stderr.decode()}")
+
+
+def preprocess_features(results_dir: str, hti_index_file: str):
+    features = np.load(
+        os.path.join(results_dir, "ensemble-features-val.npz"), allow_pickle=True
+    )
+    hti_index_file = pd.read_csv(
+        hti_index_file, usecols=["SAMPLE_KEY", "input_compound_id"]
+    ).rename({"SAMPLE_KEY": "granular_index"}, axis=1)
+    hti_index_file["index"] = hti_index_file.apply(
+        lambda x: x["granular_index"][:-2], axis=1
+    )
+
+    granular_features_df = pd.DataFrame(features["granular_features"].mean(axis=0))
+    granular_features_df["granular_index"] = features["granular_ids"]
+    granular_features_df = hti_index_file.merge(
+        granular_features_df, on="granular_index", how="inner"
+    ).drop(["granular_index", "index"], axis=1)
+
+    features_df = pd.DataFrame(features["features"])
+    features_df["index"] = features["ids"]
+    features_df = (
+        hti_index_file[["input_compound_id", "index"]]
+        .drop_duplicates()
+        .merge(features_df, on="index", how="inner")
+        .drop(["index"], axis=1)
+    )
+
+    granular_features_df.to_csv(
+        os.path.join(results_dir, "T_image_features_granular.csv"), index=False
+    )
+    features_df.to_csv(os.path.join(results_dir, "T_image_features.csv"), index=False)

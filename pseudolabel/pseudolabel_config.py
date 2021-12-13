@@ -56,7 +56,7 @@ class PseudolabelConfig:
     show_progress: bool = True
 
     @property
-    def checkpoint_dir(self) -> str:
+    def hti_checkpoint_dir(self) -> str:
         config = json.load(open(self.hti_config_file))
         checkpoint_dir = os.path.join(
             config["workspace"], config["name"], self.hti_run_name, "checkpoints"
@@ -68,6 +68,28 @@ class PseudolabelConfig:
             raise FileNotFoundError(
                 f"No checkpoint files found in the precised run folder {checkpoint_dir}"
             )
+
+    @property
+    def hti_results_dir(self) -> str:
+        config = json.load(open(self.hti_config_file))
+        results_dir = os.path.join(
+            config["workspace"], config["name"], self.hti_run_name, "results"
+        )
+        if os.listdir(results_dir):
+            return results_dir
+        else:
+            raise FileNotFoundError(
+                f"No features files found in the precised run folder {results_dir}"
+            )
+
+    @property
+    def hti_index_file(self) -> str:
+        config = json.load(open(self.hti_config_file))
+        index_file = config["dataset"]["train"]["sample_index_file"]
+        if os.path.isfile(index_file):
+            return index_file
+        else:
+            raise FileNotFoundError(f"Could not find index file {index_file}")
 
     @property
     def t8c_baseline(self) -> str:
