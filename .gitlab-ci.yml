@@ -10,6 +10,7 @@ unittests_general_env:
     - poetry run task check-black
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@git.infra.melloddy.eu/wp1/data_prep.git
     - git clone --branch 58-specifying-number-of-workers-for-data-loaders https://gitlab-ci-token:${CI_JOB_TOKEN}@git.infra.melloddy.eu/wp2/sparsechem.git
-    - pip install ./data_prep ./sparsechem
+    - git clone --branch packaging https://github.com/Ramajabal/hti-cnn.git
+    - pip install ./data_prep ./sparsechem ./hti-cnn
     - poetry run task mypy
     - SPARSECHEM_PATH=./sparsechem poetry run task test
