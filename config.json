@@ -18,5 +18,7 @@
   "imagemodel_dropouts": [0.6],
   "show_progress": true,
   "resume_hyperopt": true,
-  "pseudolabel_threshold": 0.95
+  "pseudolabel_threshold": 0.8,
+  "validation_fold" : 4,
+  "test_fold" : 0
 }
