@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import torch
 
+from pseudolabel.constants import T2_IMAGES, T_IMAGE_FEATURES
 from pseudolabel.errors import HTIError
 
 
@@ -102,18 +103,27 @@ def preprocess_features(results_dir: str, hti_index_file: str):
     features = np.load(
         os.path.join(results_dir, "ensemble-features-val.npz"), allow_pickle=True
     )
-    hti_index_file = pd.read_csv(
-        hti_index_file, usecols=["SAMPLE_KEY", "input_compound_id"]
-    ).rename({"SAMPLE_KEY": "granular_index"}, axis=1)
+    hti_index_file = pd.read_csv(hti_index_file).rename(
+        {"SAMPLE_KEY": "granular_index"}, axis=1
+    )
     hti_index_file["index"] = hti_index_file.apply(
         lambda x: x["granular_index"][:-2], axis=1
     )
 
+    hti_index_file = hti_index_file[
+        hti_index_file.granular_index.isin(features["granular_ids"])
+    ]
+    hti_index_file[["input_compound_id", "smiles"]].drop_duplicates().to_csv(
+        os.path.join(results_dir, f"{T2_IMAGES}.csv"), index=False
+    )
+
     granular_features_df = pd.DataFrame(features["granular_features"].mean(axis=0))
     granular_features_df["granular_index"] = features["granular_ids"]
-    granular_features_df = hti_index_file.merge(
-        granular_features_df, on="granular_index", how="inner"
-    ).drop(["granular_index", "index"], axis=1)
+    granular_features_df = (
+        hti_index_file[["input_compound_id", "granular_index"]]
+        .merge(granular_features_df, on="granular_index", how="inner")
+        .drop(["granular_index"], axis=1)
+    )
 
     features_df = pd.DataFrame(features["features"])
     features_df["index"] = features["ids"]
@@ -127,4 +137,6 @@ def preprocess_features(results_dir: str, hti_index_file: str):
     granular_features_df.to_csv(
         os.path.join(results_dir, "T_image_features_granular.csv"), index=False
     )
-    features_df.to_csv(os.path.join(results_dir, "T_image_features.csv"), index=False)
+    features_df.to_csv(
+        os.path.join(results_dir, f"{T_IMAGE_FEATURES}.csv"), index=False
+    )

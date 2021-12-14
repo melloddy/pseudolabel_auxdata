@@ -1,0 +1,49 @@
+{
+  "name": "gapnet-deep-ensemble-test",
+  "comment": "GapNet with dilations in the bottleneck layers. Data loading layer modified. Config for individual nets within a deep ensemble",
+  "workspace": "/private/var/folders/mp/0tzwny9n0jn8fnw08cyt21n80000gr/T/pytest-of-tmp2/pytest-7/output0",
+  "dataset": {
+    "reader": "datasets.Cellpainting",
+    "group_views": false,
+    "label_matrix_file": "/Users/tmp2/Desktop/iktos/pseudolabel_auxdata/tests/data/pseudolabel_hti_cnn/cellpainting_splits_sample/label-matrix.mtx",
+    "label_row_index_file": "/Users/tmp2/Desktop/iktos/pseudolabel_auxdata/tests/data/pseudolabel_hti_cnn/cellpainting_splits_sample/row-compound-index.csv",
+    "label_col_index_file": "/Users/tmp2/Desktop/iktos/pseudolabel_auxdata/tests/data/pseudolabel_hti_cnn/cellpainting_splits_sample/column-assay-index.csv",
+    "data_directory_path": "/Users/tmp2/Desktop/iktos/pseudolabel_auxdata/tests/data/pseudolabel_hti_cnn/cellpainting_preprocessed_sample",
+    "train": {
+      "sample_index_file": "/Users/tmp2/Desktop/iktos/pseudolabel_auxdata/tests/data/pseudolabel_hti_cnn/cellpainting_splits_sample/datasplit1-all_icd.csv",
+      "subset": 0.01
+    },
+    "transforms": [
+        "torchvision.transforms.ToTensor()",
+        "pyll.transforms.NormalizeByImage()"
+    ]
+  },
+  "optimizer": "import::torch.optim.SGD",
+  "optimizer_params": {
+    "lr": 1e-2,
+    "momentum": 0.9,
+    "weight_decay": 1e-4
+  },
+  "lr_schedule_disabled": {
+    "decay_epoch": 20,
+    "decay_rate": 0.1
+  },
+  "clip_grad_norm": {
+    "max_norm": 5,
+    "norm_type": 2
+  },
+  "model": "models.GAPNet",
+  "model_params": {
+    "fc_units": 1024,
+    "dropout": 0
+  },
+  "training": {
+    "epochs": 2,
+    "batchsize": 64
+  },
+  "ensemble": {
+    "ensemble_type": "deep_ensemble",
+    "ensemble_size": 2,
+    "cycle_length": 2
+  }
+}

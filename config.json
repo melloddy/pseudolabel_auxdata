@@ -1,4 +1,4 @@
-{"hti_config_file": "./pseudolabel_hti_cnn/gapnet-deep-ensemble-test.json",
+{"hti_config_file": "./tests/data/pseudolabel_hti_cnn/gapnet-deep-ensemble-test.json",
   "hti_run_name": "hti_cnn_0",
   "t0_melloddy_path": "./tests/data/Melloddy/tuner_input/T0.csv",
   "t1_melloddy_path": "./tests/data/Melloddy/tuner_input/T1.csv",

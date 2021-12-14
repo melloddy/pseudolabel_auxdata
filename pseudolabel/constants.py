@@ -25,3 +25,6 @@ DEFAULT_DROPOUTS = lambda: [0.6, 0.4, 0.2, 0.1, 0.0]  # noqa
 
 IMAGE_MODEL_NAME = "image_model"
 IMAGE_MODEL_DATA = "image_model_data"
+
+T2_IMAGES = "T2_images"
+T_IMAGE_FEATURES = "T_image_features"

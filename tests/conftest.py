@@ -32,11 +32,18 @@ def melloddy_folder(data_folder) -> str:
 
 
 @fixture(scope="session")
+def hti_data_folder(data_folder) -> str:
+    return os.path.join(data_folder, "pseudolabel_hti_cnn")
+
+
+@fixture(scope="session")
 def config(
-    data_folder, melloddy_folder, params_folder, output_folder
+    data_folder, melloddy_folder, params_folder, output_folder, hti_data_folder
 ) -> PseudolabelConfig:
 
     return PseudolabelConfig(
+        hti_config_file=os.path.join(hti_data_folder, "gapnet-deep-ensemble-test.json"),
+        hti_run_name="hti_test",
         t0_melloddy_path=os.path.join(melloddy_folder, "tuner_input", "T0.csv"),
         t1_melloddy_path=os.path.join(melloddy_folder, "tuner_input", "T1.csv"),
         t2_melloddy_path=os.path.join(melloddy_folder, "tuner_input", "T2.csv"),

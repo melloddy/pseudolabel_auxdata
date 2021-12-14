@@ -10,6 +10,7 @@ from pseudolabel import (
     predict_images_fold2,
     t_pseudolabels_generation,
 )
+from pseudolabel.constants import T2_IMAGES, T_IMAGE_FEATURES
 from pseudolabel.hti_cnn import create_featurizer_config
 from pseudolabel.pseudolabel_config import PseudolabelConfig
 from pseudolabel.tuner import generation, tuner_tools
@@ -38,16 +39,31 @@ class PseudolabelPipe:
 
         self.config = PseudolabelConfig.load_config(config_file)
 
-    def run_partial_pipe(self, starting_step: str):
+    def run_full_pipe(
+        self,
+    ):
+        LOGGER.info("Starting HTI pipe for image featurizing")
+        self.run_hti_cnn()
+        self.config.t_images_features_path = os.path.join(
+            self.config.hti_results_dir, f"{T_IMAGE_FEATURES}.csv"
+        )
+        self.config.t2_images_path = os.path.join(
+            self.config.hti_results_dir, f"{T2_IMAGES}.csv"
+        )
+
+        LOGGER.info("Starting pseudolabel pipe for pseudolabel generation")
+        self.run_pseudolabel_full_pipe()
+
+    def run_pseudolabel_partial_pipe(self, starting_step: str):
         if starting_step not in self.steps_list:
             raise ValueError(
                 f"{starting_step} is not a valid starting step, please choose one on the following : "
                 f"{self.steps_list}"
             )
         starting_step_ind = self.steps_list.index(starting_step)
-        self.run_full_pipe(starting_step_ind)
+        self.run_pseudolabel_full_pipe(starting_step_ind)
 
-    def run_full_pipe(self, starting_ind=0):
+    def run_pseudolabel_full_pipe(self, starting_ind=0):
         if starting_ind <= 0:
             LOGGER.info("STEP 1/5: Starting tuner preprocessing")
             generation.find_overlap_with_melloddy(

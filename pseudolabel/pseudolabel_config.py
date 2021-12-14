@@ -63,7 +63,7 @@ class PseudolabelConfig:
         )
         checkpoint_list = [str(i) for i in Path(checkpoint_dir).glob("*.pth.tar")]
         if len(checkpoint_list) != 0:
-            return os.path.join(checkpoint_dir, checkpoint_list[0])
+            return checkpoint_list[0]
         else:
             raise FileNotFoundError(
                 f"No checkpoint files found in the precised run folder {checkpoint_dir}"

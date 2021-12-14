@@ -34,9 +34,10 @@ isort = "^5.9.0"
 taskipy = "^1.2.1"
 
 [tool.poetry.scripts]
-pseudolabel-pipe = "pseudolabel.cli:run_pipe"
-pseudolabel-partial-pipe = "pseudolabel.cli:run_parital_pipe"
+pseudolabel-pipe = "pseudolabel.cli:run_pseudolabel_pipe"
+pseudolabel-partial-pipe = "pseudolabel.cli:run_pseudolabel_parital_pipe"
 hti-pipe = "pseudolabel.cli:run_hti_cnn"
+hti-pseudolabel-pipe = "pseudolabel.cli:run_full_pip"
 
 [tool.mypy]
 python_version = "3.7"
