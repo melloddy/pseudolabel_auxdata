@@ -91,7 +91,7 @@ The list of parameters to be defined are :
 * `pseudolabel_threshold`: threshold to use to filter pseudolabels with low confidence, it should be greater to the minimum threshold 0.9. (default value : 0.9)
 
 ### Step 3: Run pipeline
-You can run the pipeline after configuring thr *config.json* file with the following command on the CLI:
+You can run the pipeline after configuring the *config.json* file with the following command on the CLI:
 
 ```bash
  pseudolabel-pipe -c config.json
@@ -119,3 +119,33 @@ The pipeline saves different files in the output folder specified. The outputted
 * **intermediate** : Contains intermediate files, used by the pipeline
 * **logs** : log files of sparsechem
 * **pseudolabels** : final T files containing auxiliary pseudolabels
+
+
+## HTI CNN Pipeline
+The following section covers the different instructions on how to use the HTI CNN pipeline for image featurizing.
+
+To use the pipeline, you need to install first the hti-cnn package available [here](https://github.com/Ramajabal/hti-cnn/tree/packagin).
+To install the package you can run the following command in the cloned repository :
+
+```bash
+pip install .
+```
+
+### Input files
+In order to use the hti-cnn pipeline to featurize images, you need to prepare first the following files:
+- `label-matrix.mtx` : y matrix to use to train the model.
+- `column-assay-index.csv` : csv file containing assay ids ordered in the same order in the y matrix.
+- `row-compound-index.csv`: a csv containing the indices of the compounds in the y matrix and a corresponding identifier (smiles, input_compound_id, INCHIKEY).
+- `datasplit.csv` : a csv file containing all the name of images' files to include in the training of the model and in the featurization and their corresponding id, smiles and INCHIKEY.
+- `\cellpainting_preprocessed_sample` : a folder containing all pre-processed image files (npz format)
+
+To specify the set of hyperparameters to use and data directories a configuration file needs to be provided. An example of configuration file is provided in `test/data/pseudolabel_hti_cnn/gapnet-deep-ensemble-test.json`.
+This config file needs to be adjusted accordingly and referenced in the pseudolabl's config file *config.json* under the name `hti_config_file`. Also, a run name which would be used as the name of the output folder for the hti-cnn pipeline needs to be specified under `hti_run_name`.
+
+
+### Run the pipeline
+You can run the pipeline using the adjusted *config.json* file used for the pseudolabel pipeline with the following command:
+
+```bash
+hti-pipe -c ./config.json
+```
