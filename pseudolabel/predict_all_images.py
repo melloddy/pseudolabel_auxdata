@@ -1,8 +1,8 @@
+import glob
 import os
 import subprocess
 from typing import Optional
 
-import glob
 import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix, load_npz, save_npz
@@ -16,7 +16,7 @@ def create_x_ysparse_all_images(
     t_images_features_path: str,
     analysis_folder: str,
     intermediate_files_folder: str,
-    size_batch: int
+    size_batch: int,
 ):
     t10_path = os.path.join(
         tuner_output_image,
@@ -27,7 +27,7 @@ def create_x_ysparse_all_images(
     )
     t10 = load_npz(t10_path)
 
-    x_arr = pd.read_csv(t_images_features_path, index_col='input_compound_id')
+    x_arr = pd.read_csv(t_images_features_path, index_col="input_compound_id")
 
     cp_results_path = os.path.join(analysis_folder, "cp/summary_eps_0.05.csv")
 
@@ -64,7 +64,8 @@ def create_x_ysparse_all_images(
 
         save_npz(
             file=os.path.join(
-                intermediate_files_folder, f"y_sparse_step2_inference_allcmpds_batch_{i}.npz"
+                intermediate_files_folder,
+                f"y_sparse_step2_inference_allcmpds_batch_{i}.npz",
             ),
             matrix=csr_matrix(Y_to_pred),
         )
@@ -72,7 +73,8 @@ def create_x_ysparse_all_images(
         del data, rows, cols
         save_npz(
             file=os.path.join(
-                intermediate_files_folder, f"x_sparse_step2_inference_allcmpds_batch_{i}.npz"
+                intermediate_files_folder,
+                f"x_sparse_step2_inference_allcmpds_batch_{i}.npz",
             ),
             matrix=csr_matrix(x_arr.iloc[lower_lim:upper_lim]),
         )
@@ -86,14 +88,23 @@ def run_sparsechem_predict(
     torch_device: str,
     logs_dir: Optional[str] = None,
 ):
-    num_batches = len(glob.glob(os.path.join(intermediate_files_folder, "x_sparse_step2_inference_allcmpds_batch_*.npz")))
+    num_batches = len(
+        glob.glob(
+            os.path.join(
+                intermediate_files_folder,
+                "x_sparse_step2_inference_allcmpds_batch_*.npz",
+            )
+        )
+    )
 
     for i in range(num_batches):
         x_path = os.path.join(
-            intermediate_files_folder, f"x_sparse_step2_inference_allcmpds_batch_{i}.npz"
+            intermediate_files_folder,
+            f"x_sparse_step2_inference_allcmpds_batch_{i}.npz",
         )
         y_path = os.path.join(
-            intermediate_files_folder, f"y_sparse_step2_inference_allcmpds_batch_{i}.npz"
+            intermediate_files_folder,
+            f"y_sparse_step2_inference_allcmpds_batch_{i}.npz",
         )
         if logs_dir:
             os.makedirs(logs_dir, exist_ok=True)
@@ -112,7 +123,8 @@ def run_sparsechem_predict(
                 os.path.join(best_model, f"{IMAGE_MODEL_NAME}.pt"),
                 "--outprefix",
                 os.path.join(
-                    intermediate_files_folder, f"pred_cpmodel_step2_inference_allcmpds_batch_{i}"
+                    intermediate_files_folder,
+                    f"pred_cpmodel_step2_inference_allcmpds_batch_{i}",
                 ),
                 "--dev",
                 torch_device,
@@ -120,7 +132,10 @@ def run_sparsechem_predict(
                 str(dataloader_num_workers),
             ],
             stdout=open(
-                os.path.join(logs_dir, f"pred_cpmodel_step2_inference_allcmpds_log_batch_{i}.txt"), "w"
+                os.path.join(
+                    logs_dir, f"pred_cpmodel_step2_inference_allcmpds_log_batch_{i}.txt"
+                ),
+                "w",
             )
             if logs_dir
             else subprocess.PIPE,
@@ -128,4 +143,6 @@ def run_sparsechem_predict(
         )
 
         if proc.returncode != 0:
-            raise PredictOptError(f"Predict all images failed: \n {proc.stderr.decode()}")
+            raise PredictOptError(
+                f"Predict all images failed: \n {proc.stderr.decode()}"
+            )

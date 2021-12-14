@@ -1,6 +1,7 @@
+import glob
 import json
 import os
-import glob
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -347,14 +348,17 @@ def apply_cp_aux(
     eps: float = 0.05,
 ):
     pred_file_list = glob.glob(
-        os.path.join(intermediate_files, "pred_cpmodel_step2_inference_allcmpds_batch_*-class.npy"
-                    )
+        os.path.join(
+            intermediate_files,
+            "pred_cpmodel_step2_inference_allcmpds_batch_*-class.npy",
+        )
     )
 
     pred_batches = []
     for ind in range(len(pred_file_list)):
         pred_file = os.path.join(
-            intermediate_files, f"pred_cpmodel_step2_inference_allcmpds_batch_{ind}-class.npy"
+            intermediate_files,
+            f"pred_cpmodel_step2_inference_allcmpds_batch_{ind}-class.npy",
         )
         pred_batches.append(np.load(pred_file, allow_pickle=True).item())
 
