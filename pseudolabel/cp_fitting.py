@@ -1,10 +1,11 @@
+import glob
 import json
 import os
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy.sparse import csc_matrix
+from scipy.sparse import csc_matrix, vstack
 from tqdm import tqdm
 
 from pseudolabel.cp_utils import cp_label_predictor, micp, prob_ncm
@@ -346,10 +347,23 @@ def apply_cp_aux(
     intermediate_files: str,
     eps: float = 0.05,
 ):
-    path_preds_all_cmpds = os.path.join(
-        intermediate_files, "pred_cpmodel_step2_inference_allcmpds-class.npy"
+    pred_file_list = glob.glob(
+        os.path.join(
+            intermediate_files,
+            "pred_cpmodel_step2_inference_allcmpds_batch_*-class.npy",
+        )
     )
-    preds = np.load(path_preds_all_cmpds, allow_pickle=True).item()
+
+    pred_batches = []
+    for ind in range(len(pred_file_list)):
+        pred_file = os.path.join(
+            intermediate_files,
+            f"pred_cpmodel_step2_inference_allcmpds_batch_{ind}-class.npy",
+        )
+        pred_batches.append(np.load(pred_file, allow_pickle=True).item())
+
+    preds = vstack(pred_batches)
+    del pred_batches
 
     with open(os.path.join(analysis_folder, "cp/labels_fva_dict.json")) as fp:
         labels_fva_dict = json.load(fp)

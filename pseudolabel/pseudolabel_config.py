@@ -54,6 +54,7 @@ class PseudolabelConfig:
     show_progress: bool = True
     resume_hyperopt: bool = True
     hyperopt_subset_ind: Tuple = None
+    x_ysparse_batch_size: int = 100000
 
     @property
     def t8c_baseline(self) -> str:
