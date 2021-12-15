@@ -55,6 +55,8 @@ class PseudolabelConfig:
     resume_hyperopt: bool = True
     hyperopt_subset_ind: Tuple = None
     x_ysparse_batch_size: int = 100000
+    apply_cp_to_task_batch: int = -1
+    number_task_batches: int = -1
 
     @property
     def t8c_baseline(self) -> str:
@@ -183,6 +185,17 @@ class PseudolabelConfig:
             self.hyperopt_subset_ind[1] <= self.hyperopt_size
         ), f"Subset's end index incorrect, needs to be <= {self.hyperopt_size}"
 
+    def __check_apply_cp_task_batch(self):
+        assert self.apply_cp_to_task_batch != 0 and self.number_task_batches != 0, (
+            "Zero not allowed for config parameters `apply_cp_to_task_batch` and `number_cp_task_batches`"
+        )
+        assert (self.apply_cp_to_task_batch > 0 and self.number_task_batches > 0), (
+            "The two config parameters `apply_cp_to_task_batch` and `number_cp_task_batches` must be either > 0 or < 0 at the same time"
+        )
+        assert self.apply_cp_to_task_batch <= self.number_task_batches - 1, (
+            f"Cannot apply CP to a task batch > than the specified number of task batches {self.number_cp_task_batches}"
+        )
+
     def check_data(self):
         # TODO Add more checks
         self.__check_files_exist()
@@ -190,6 +203,9 @@ class PseudolabelConfig:
         self.__check_threshold()
         if self.hyperopt_subset_ind:
             self.__check_hyperopt_subset_ind()
+        if self.apply_cp_to_task_batch >= 0 or self.number_task_batches >=0:
+            self.__check_apply_cp_task_batch()
+
 
     @classmethod
     def load_config(cls, json_path: str) -> PseudolabelConfig:

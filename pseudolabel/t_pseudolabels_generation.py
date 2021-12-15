@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import glob
 
 import numpy as np
 import pandas as pd
@@ -9,20 +10,28 @@ LOGGER = logging.getLogger(__name__)
 
 
 def generate_t_aux_pl(
-    intermediate_files_folder: str, t2_melloddy_path: str, t2_images_path: str
+    intermediate_files_folder: str,
+    t2_melloddy_path: str,
+    t2_images_path: str,
+    num_task_batch: int
 ):
     # add labels
     # integerization of compound id
     # integerization and mapping of the assay id
     # T2, T0 creation
     # ---
-
-    t1 = pd.read_csv(
+    list_t1_batches = glob.glob(
         os.path.join(
             intermediate_files_folder,
-            "image_pseudolabel_aux_nolabels/T1_image_pseudolabel_aux_nolabels.csv",
+            f"image_pseudolabel_aux_nolabels/T1_image_pseudolabel_aux_nolabels_numbatch{num_task_batch}_taskbatch*.csv",
         )
     )
+
+    dat = []
+    for t1_batch_file in list_t1_batches:
+        dat.append(pd.read_csv(t1_batch_file))
+    t1 = pd.concat(dat, ignore_index=True)
+    LOGGER.info(f"Found {t1['input_assay_id'].nunique()} tasks with data in {intermediate_files_folder}/image_pseudolabel_aux_nolabels/")
 
     # T0 creation
 

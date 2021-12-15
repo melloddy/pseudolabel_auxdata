@@ -22,7 +22,8 @@ class PseudolabelPipe:
             "data_preprocessing",
             "image_model_hyperscan",
             "fit_conformal_predictors",
-            "generate_pseudolabels",
+            "generate_all_predictions",
+            "apply_cp_aux",
             "generate_T_files_pseudolabels",
         ]
         if config_file:
@@ -47,7 +48,7 @@ class PseudolabelPipe:
     def run_full_pipe(self, starting_ind=0):
         # TODO Add step number/steps
         if starting_ind <= 0:
-            LOGGER.info("STEP 1/5: Starting tuner preprocessing")
+            LOGGER.info("STEP 1/6: Starting tuner preprocessing")
             generation.find_overlap_with_melloddy(
                 t0_melloddy_path=self.config.t0_melloddy_path,
                 t1_melloddy_path=self.config.t1_melloddy_path,
@@ -76,7 +77,7 @@ class PseudolabelPipe:
             )
 
         if starting_ind <= 1:
-            LOGGER.info("STEP 2/5: Starting hyperparameter scan on image models")
+            LOGGER.info("STEP 2/6: Starting hyperparameter scan on image models")
             hyperparameters_scan.run_hyperopt(
                 epochs_lr_steps=self.config.imagemodel_epochs_lr_steps,
                 hidden_sizes=self.config.imagemodel_hidden_size,
@@ -94,7 +95,7 @@ class PseudolabelPipe:
 
         if starting_ind <= 2:
             LOGGER.info(
-                "STEP 3/5: Selecting best hyperparameter and generating y sparse fold val for inference"
+                "STEP 3/6: Selecting best hyperparameter and generating y sparse fold val for inference"
             )
             if not hyperparameters_scan.hyperopt_completion_status(
                 hyperopt_size=self.config.hyperopt_size,
@@ -147,7 +148,7 @@ class PseudolabelPipe:
 
         if starting_ind <= 3:
             LOGGER.info(
-                "STEP 4/5: Generating x and y sparse for all images on selected tasks for inference"
+                "STEP 4/6: Generating x and y sparse for all images on selected tasks for inference"
             )
             predict_all_images.create_x_ysparse_all_images(
                 tuner_output_image=self.config.tuner_output_folder_image,
@@ -175,22 +176,36 @@ class PseudolabelPipe:
                 dataloader_num_workers=self.config.dataloader_num_workers,
                 torch_device=self.config.torch_device,
             )
+            if self.config.number_task_batches > 0:
+                LOGGER.info("batch apply-cp-aux mode detected. Stopping here for parallel apply-cp-aux submission")
+                quit()
 
-            LOGGER.info("Apply conformal predictors on all images predictions")
+        if starting_ind <= 4:
+            LOGGER.info("STEP 5/6 : Apply conformal predictors on all images predictions")
 
             cp_fitting.apply_cp_aux(
                 analysis_folder=self.config.analysis_folder,
                 t2_images_path=self.config.t2_images_path,
                 intermediate_files=self.config.intermediate_files_folder,
+                num_task_batch=self.config.number_task_batches,
+                task_batch=self.config.apply_cp_to_task_batch
             )
+            if self.config.number_task_batches > 0:
+                # needs to quit here and make sure we have all batch runs before starting next step.
+                # we need to stop here and check manually
+                # unless we have a way to find out - at this point - the expected number of tasks 
+                # that have data saved in files produced by apply_cp_aux, we cannot proceed to next step 
+                LOGGER.info("Done, please verify the completion - and restart pipeline from next step once all batches are complete (generate_T_files_pseudolabels)")
+                quit()
 
-        if starting_ind <= 4:
-            LOGGER.info("STEP 5/5: Creating T files for pseudolabels auxiliary tasks")
+        if starting_ind <= 5:
+            LOGGER.info("STEP 6/6: Creating T files for pseudolabels auxiliary tasks")
 
             t_pseudolabels_generation.generate_t_aux_pl(
                 intermediate_files_folder=self.config.intermediate_files_folder,
                 t2_melloddy_path=self.config.t2_melloddy_path,
                 t2_images_path=self.config.t2_images_path,
+                num_task_batch=self.config.number_task_batches
             )
 
             LOGGER.info("Replacing pseudolabels values with true labels if applicable")

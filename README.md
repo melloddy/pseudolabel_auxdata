@@ -38,12 +38,14 @@ this will allow to download the pseudolabel pipeline package in the active envir
 - Infer using image-based model on fold 2 of only labeled datapoints of the image dataset
 - Fit conformal predictors, half of the fold 2 will be used for fitting, half for evaluation.
 
-### 4 - Generating pseudolabels
+### 4 - Generating prediction for pseudolabels
 - Infer using image-based model on all datapoints of the image dataset, including non-MELLODDY compounds.
-- Use outputted predictions to generate pseudolabels via conformal predictors.
 
-### 5 - Generating T files for pseudolabels
+### 5 - Apply conformal prediction to predictions
+- Use outputted predictions to generate pseudolabels via conformal predictors.
 - generate T1-style pseudolabel file from predictions
+
+### 6 - Generating T files for pseudolabels
 - replace predictions with their true values from main tasks when they exist
 - filter pseudolabels with low confidence
 - Generate pseudolabel auxiliary data T0,T1,T2 files
@@ -91,6 +93,10 @@ The list of parameters to be defined are :
   - `show_progress` : when set to true, the progress of the image-based model's hyperparameter scan is shown in the logs
   - `resume_hyperopt` : when set to true, the hyperparameters that are already explored (whose corresponding run's folder exists) are skipped.
   - `hyperopt_subset_ind` : Tuple containing beginning and end indices of the subset of hyperparameters to include in the hyperoptimization scan. The default value of the argument is **None** and this case all hyperparameters are included in the scan.
+* **Parameters related to the application of CP **
+  - `number_task_batches`: <i>integer</i> defaulted to -1 (if negative, applies CPs to the whole set of tasks at onces , sequentially). If positive, chunks the list of tasks into the specified number of batches (not allowed: zero / different sign than apply_cp_to_task_batch).
+  - `apply_cp_to_task_batch`: <i>integer</i> defaulted to -1 (if negative, applies CPs to the whole set of tasks at onces , sequentially). If positive, allows to specify the batch index onto which to apply CP. Depends on the number of batches requested (not allowed : zero / different sign than number_task_batches / > than number_task_batches - 1).
+
 * `pseudolabel_threshold`: threshold to use to filter pseudolabels with low confidence, it should be greater to the minimum threshold 0.8. (default value : 0.9)
 
 ### Step 3: Run pipeline
@@ -109,7 +115,8 @@ Where `intermediate_step_name` is one of the following and corresponds to one of
 * data_preprocessing
 * image_model_hyperscan
 * fit_conformal_predictors
-* generate_pseudolabels
+* generate_all_predictions
+* apply_cp
 * generate_T_files_pseudolabels
 
 

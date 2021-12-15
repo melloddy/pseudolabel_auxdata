@@ -91,3 +91,30 @@ def cp_label_predictor(p0, p1, eps):
         # return 'empty'
         # it should actually return 'empty', but to avoid a confusion for people
         return "uncertain none"
+
+
+def chunks(lst: list, n: int):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
+
+
+def get_chunk_from_index(lst: list, num_task_batch: int, task_batch: int):
+    """ Returns the chunk of tasks given a number of batches and the desired batch index, may be empty
+    Inputs:
+    - lst : full list of columns/tasks onto which to apply CPs
+    - num_task_batch : desired number of batches
+    - task_batch : index of the task batch to return
+    """
+
+    assert num_task_batch <= len(lst), f"Number of task batches cannot be higher than the number of tasks {len(lst)}"
+
+    # mini batch size = 2 ensures real number of batches never exceeds the requested number of batches
+    size_batch = int(len(lst) / num_task_batch) + 1
+
+    task_selection = []
+    for i, batch in enumerate(chunks(lst, size_batch)):
+        if i == task_batch:
+            [task_selection.append(x) for x in batch]
+
+    return task_selection

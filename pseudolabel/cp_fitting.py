@@ -8,7 +8,7 @@ import pandas as pd
 from scipy.sparse import csc_matrix, vstack
 from tqdm import tqdm
 
-from pseudolabel.cp_utils import cp_label_predictor, micp, prob_ncm
+from pseudolabel.cp_utils import cp_label_predictor, micp, prob_ncm, get_chunk_from_index
 
 
 def splitting_data(
@@ -353,6 +353,8 @@ def apply_cp_aux(
     analysis_folder: str,
     t2_images_path: str,
     intermediate_files: str,
+    num_task_batch: int,
+    task_batch: int,
     eps: float = 0.05,
 ):
     predictions_folder = os.path.join(intermediate_files, "all_cmpds", "predictions")
@@ -362,6 +364,7 @@ def apply_cp_aux(
             "pred_cpmodel_step2_inference_allcmpds_batch_*-class.npy",
         )
     )
+    assert len(pred_file_list) > 0, f"Cannot find prediction files in {predictions_folder}"
 
     pred_batches = []
     for ind in range(len(pred_file_list)):
@@ -379,7 +382,15 @@ def apply_cp_aux(
     with open(os.path.join(analysis_folder, "cp/ncms_fva_fit_dict.json")) as fp:
         ncms_fva_fit_dict = json.load(fp)
 
-    cols = list(np.unique(preds.nonzero()[1]))
+    cols = list(np.unique(preds[100,:].nonzero()[1]))
+
+    # if specified, get a chunk of cols onto which to apply CPs
+    if num_task_batch > 0:
+        cols = get_chunk_from_index(cols, num_task_batch, task_batch)
+
+    if len(cols) == 0:
+        print("No task batch found - stopping here")
+        quit()
 
     indxs = []
     n_active_preds = []
@@ -436,14 +447,17 @@ def apply_cp_aux(
             ).query("standard_value == 0 or standard_value == 1")
         )
 
-    arr = pd.concat(arrs)
-    image_pseudolabel_aux_nolabels = os.path.join(
-        intermediate_files, "image_pseudolabel_aux_nolabels"
-    )
-    os.makedirs(image_pseudolabel_aux_nolabels, exist_ok=True)
-    arr.to_csv(
-        os.path.join(
-            image_pseudolabel_aux_nolabels, "T1_image_pseudolabel_aux_nolabels.csv"
-        ),
-        index=False,
-    )
+    if len(arrs) > 0:
+        arr = pd.concat(arrs)
+        image_pseudolabel_aux_nolabels = os.path.join(
+            intermediate_files, "image_pseudolabel_aux_nolabels"
+        )
+        os.makedirs(image_pseudolabel_aux_nolabels, exist_ok=True)
+        arr.to_csv(
+            os.path.join(
+                image_pseudolabel_aux_nolabels, f"T1_image_pseudolabel_aux_nolabels_numbatch{num_task_batch}_taskbatch{task_batch}.csv"
+            ),
+            index=False,
+        )
+
+    return
