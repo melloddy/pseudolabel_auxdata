@@ -155,6 +155,9 @@ class PseudolabelConfig:
     def __t_images_check(self):
         t_images = pd.read_csv(self.t_images_features_path)
         assert (
+            ~t_images.isna().any().any()
+        ), f"{self.t_images_features_path} can't contain missing values"
+        assert (
             sum(t_images.input_compound_id.duplicated()) == 0
         ), f"{self.t_images_features_path} can't have duplicates"
 
