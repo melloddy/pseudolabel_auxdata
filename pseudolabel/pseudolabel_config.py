@@ -54,6 +54,7 @@ class PseudolabelConfig:
     show_progress: bool = True
     resume_hyperopt: bool = True
     hyperopt_subset_ind: Tuple = None
+    x_ysparse_batch_size: int = 100000
 
     @property
     def t8c_baseline(self) -> str:
@@ -153,6 +154,9 @@ class PseudolabelConfig:
 
     def __t_images_check(self):
         t_images = pd.read_csv(self.t_images_features_path)
+        assert (
+            ~t_images.isna().any().any()
+        ), f"{self.t_images_features_path} can't contain missing values"
         assert (
             sum(t_images.input_compound_id.duplicated()) == 0
         ), f"{self.t_images_features_path} can't have duplicates"

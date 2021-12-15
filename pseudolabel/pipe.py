@@ -154,6 +154,7 @@ class PseudolabelPipe:
                 t_images_features_path=self.config.t_images_features_path,
                 analysis_folder=self.config.analysis_folder,
                 intermediate_files_folder=self.config.intermediate_files_folder,
+                size_batch=self.config.x_ysparse_batch_size,
             )
 
             LOGGER.info("Generating predictions on all image compounds")
@@ -166,7 +167,6 @@ class PseudolabelPipe:
             best_model = predict_images_fold_val.find_best_model(
                 hyperopt_folder=self.config.hyperopt_output_folder
             )
-
             predict_all_images.run_sparsechem_predict(
                 sparsechem_predictor_path=self.config.sparsechem_predictor_path,
                 best_model=best_model,

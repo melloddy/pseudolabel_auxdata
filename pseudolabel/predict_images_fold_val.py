@@ -87,6 +87,11 @@ def find_best_model(hyperopt_folder: str, eval_metric: str = "roc_auc_score") ->
 def create_ysparse_fold_val(
     tuner_output_images: str, intermediate_files_folder: str, validation_fold: int
 ):
+    x_y_sparse_val_folder = os.path.join(
+        intermediate_files_folder, "fold_val", "x_y_sparse"
+    )
+    os.makedirs(x_y_sparse_val_folder, exist_ok=True)
+
     folds_path = os.path.join(
         tuner_output_images,
         "matrices",
@@ -135,7 +140,7 @@ def create_ysparse_fold_val(
     out[:, mask] = 0
 
     filename = os.path.join(
-        intermediate_files_folder, "y_sparse_step1_main_tasks_fold_val.npy"
+        x_y_sparse_val_folder, "y_sparse_step1_main_tasks_fold_val.npy"
     )
     np.save(filename, csr_matrix(out))
 
@@ -149,6 +154,14 @@ def run_sparsechem_predict(
     torch_device: str,
     logs_dir: Optional[str] = None,
 ):
+    x_y_sparse_val_folder = os.path.join(
+        intermediate_files_folder, "fold_val", "x_y_sparse"
+    )
+    predictions_val_folder = os.path.join(
+        intermediate_files_folder, "fold_val", "predictions"
+    )
+    os.makedirs(predictions_val_folder, exist_ok=True)
+
     x_path = os.path.join(
         tuner_output_dir,
         "matrices",
@@ -157,7 +170,7 @@ def run_sparsechem_predict(
         "cls_T11_x_features.npz",
     )
     y_path = os.path.join(
-        intermediate_files_folder, "y_sparse_step1_main_tasks_fold_val.npy"
+        x_y_sparse_val_folder, "y_sparse_step1_main_tasks_fold_val.npy"
     )
     if logs_dir:
         os.makedirs(logs_dir, exist_ok=True)
@@ -175,7 +188,7 @@ def run_sparsechem_predict(
             "--model",
             os.path.join(best_model, f"{IMAGE_MODEL_NAME}.pt"),
             "--outprefix",
-            os.path.join(intermediate_files_folder, "pred_images_fold_val"),
+            os.path.join(predictions_val_folder, "pred_images_fold_val"),
             "--dev",
             torch_device,
             "--num_workers",

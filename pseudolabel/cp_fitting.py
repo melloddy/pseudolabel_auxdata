@@ -1,10 +1,11 @@
+import glob
 import json
 import os
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy.sparse import csc_matrix
+from scipy.sparse import csc_matrix, vstack
 from tqdm import tqdm
 
 from pseudolabel.cp_utils import cp_label_predictor, micp, prob_ncm
@@ -13,11 +14,19 @@ from pseudolabel.cp_utils import cp_label_predictor, micp, prob_ncm
 def splitting_data(
     tuner_output_images: str, intermediate_files_folder: str, fold_va: int = 2
 ):
+
+    predictions_val_folder = os.path.join(
+        intermediate_files_folder, "fold_val", "predictions"
+    )
+    x_y_sparse_val_folder = os.path.join(
+        intermediate_files_folder, "fold_val", "x_y_sparse"
+    )
+
     path_labels = os.path.join(
-        intermediate_files_folder, "y_sparse_step1_main_tasks_fold_val.npy"
+        x_y_sparse_val_folder, "y_sparse_step1_main_tasks_fold_val.npy"
     )
     fva_preds_path = os.path.join(
-        intermediate_files_folder, "pred_images_fold_val-class.npy"
+        predictions_val_folder, "pred_images_fold_val-class.npy"
     )
 
     path_sn = os.path.join(tuner_output_images, "results_tmp/folding/T2_folds.csv")
@@ -346,10 +355,24 @@ def apply_cp_aux(
     intermediate_files: str,
     eps: float = 0.05,
 ):
-    path_preds_all_cmpds = os.path.join(
-        intermediate_files, "pred_cpmodel_step2_inference_allcmpds-class.npy"
+    predictions_folder = os.path.join(intermediate_files, "all_cmpds", "predictions")
+    pred_file_list = glob.glob(
+        os.path.join(
+            predictions_folder,
+            "pred_cpmodel_step2_inference_allcmpds_batch_*-class.npy",
+        )
     )
-    preds = np.load(path_preds_all_cmpds, allow_pickle=True).item()
+
+    pred_batches = []
+    for ind in range(len(pred_file_list)):
+        pred_file = os.path.join(
+            predictions_folder,
+            f"pred_cpmodel_step2_inference_allcmpds_batch_{ind}-class.npy",
+        )
+        pred_batches.append(np.load(pred_file, allow_pickle=True).item())
+
+    preds = vstack(pred_batches)
+    del pred_batches
 
     with open(os.path.join(analysis_folder, "cp/labels_fva_dict.json")) as fp:
         labels_fva_dict = json.load(fp)
