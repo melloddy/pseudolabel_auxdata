@@ -1,3 +1,4 @@
+import glob
 import logging
 import os
 import subprocess
@@ -11,6 +12,21 @@ from pseudolabel.errors import HyperOptError
 LOGGER = logging.getLogger(__name__)
 
 
+def hyperopt_completion_status(
+    hyperopt_size: int,
+    hp_output_dir: str,
+):
+    models = glob.glob(os.path.join(hp_output_dir, "*", "*.json"))
+
+    if len(models) < hyperopt_size:
+        LOGGER.warning(
+            f"Expected {hyperopt_size} models in {hp_output_dir}, but found only {len(models)}."
+        )
+        return False
+    else:
+        return True
+
+
 def run_hyperopt(
     epochs_lr_steps: List[Tuple[int, int]],
     hidden_sizes: List[List[str]],
@@ -19,8 +35,11 @@ def run_hyperopt(
     sparsechem_trainer_path: str,
     tuner_output_dir: str,
     torch_device: str,
+    validation_fold: int,
+    test_fold: int,
     resume_hyperopt: bool = True,
     show_progress: bool = True,
+    hyperopt_subset_ind: Tuple = None,
 ):
 
     distqdm = not show_progress
@@ -48,6 +67,10 @@ def run_hyperopt(
             ):
                 i += 1
                 num = str(i).zfill(3)
+                if hyperopt_subset_ind and not (
+                    hyperopt_subset_ind[0] <= i <= hyperopt_subset_ind[1]
+                ):
+                    continue
 
                 # Remove spaces in hidden layers (for file name)
                 hidden_name = "-".join(hidden)
@@ -55,7 +78,11 @@ def run_hyperopt(
                 # Create script folder and create script
 
                 current_model_dir = os.path.join(hp_output_dir, run_name)
-                if resume_hyperopt and os.path.isdir(current_model_dir):
+                current_model_file = os.path.join(
+                    current_model_dir, IMAGE_MODEL_NAME + ".json"
+                )
+
+                if resume_hyperopt and os.path.isfile(current_model_file):
                     continue
                 os.makedirs(current_model_dir, exist_ok=True)
 
@@ -78,7 +105,7 @@ def run_hyperopt(
                             "cls",
                             "cls_T11_x_features.npz",
                         ),
-                        "--y",
+                        "--y_class",
                         os.path.join(
                             tuner_output_dir,
                             "matrices",
@@ -104,12 +131,8 @@ def run_hyperopt(
                         ),
                         "--hidden_sizes",
                         *hidden,
-                        "--last_dropout",
-                        str(dropout),
-                        "--middle_dropout",
-                        str(dropout),
-                        "--last_non_linearity",
-                        "relu",
+                        "--dropouts_trunk",
+                        *[str(dropout) for i in hidden],
                         "--non_linearity",
                         "relu",
                         "--input_transform",
@@ -129,9 +152,9 @@ def run_hyperopt(
                         "--batch_ratio",
                         "0.02",
                         "--fold_va",
-                        "2",
+                        str(validation_fold),
                         "--fold_te",
-                        "0",
+                        str(test_fold),
                         "--verbose",
                         "1",
                         "--save_model",

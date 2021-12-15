@@ -84,9 +84,8 @@ def find_best_model(hyperopt_folder: str, eval_metric: str = "roc_auc_score") ->
     return best_model
 
 
-def create_ysparse_fold2(
-    tuner_output_images: str,
-    intermediate_files_folder: str,
+def create_ysparse_fold_val(
+    tuner_output_images: str, intermediate_files_folder: str, validation_fold: int
 ):
     folds_path = os.path.join(
         tuner_output_images,
@@ -108,7 +107,7 @@ def create_ysparse_fold2(
 
     out = lil_matrix(t10)
 
-    fold = 2
+    fold = validation_fold
     out[folds != fold, :] = 0
 
     t8c_path = os.path.join(
@@ -136,7 +135,7 @@ def create_ysparse_fold2(
     out[:, mask] = 0
 
     filename = os.path.join(
-        intermediate_files_folder, "y_sparse_step1_main_tasks_fold2.npy"
+        intermediate_files_folder, "y_sparse_step1_main_tasks_fold_val.npy"
     )
     np.save(filename, csr_matrix(out))
 
@@ -158,7 +157,7 @@ def run_sparsechem_predict(
         "cls_T11_x_features.npz",
     )
     y_path = os.path.join(
-        intermediate_files_folder, "y_sparse_step1_main_tasks_fold2.npy"
+        intermediate_files_folder, "y_sparse_step1_main_tasks_fold_val.npy"
     )
     if logs_dir:
         os.makedirs(logs_dir, exist_ok=True)
@@ -176,13 +175,13 @@ def run_sparsechem_predict(
             "--model",
             os.path.join(best_model, f"{IMAGE_MODEL_NAME}.pt"),
             "--outprefix",
-            os.path.join(intermediate_files_folder, "pred_images_fold2"),
+            os.path.join(intermediate_files_folder, "pred_images_fold_val"),
             "--dev",
             torch_device,
             "--num_workers",
             str(dataloader_num_workers),
         ],
-        stdout=open(os.path.join(logs_dir, "predict_images_fold2_log.txt"), "w")
+        stdout=open(os.path.join(logs_dir, "predict_images_fold_val_log.txt"), "w")
         if logs_dir
         else subprocess.PIPE,
         stderr=subprocess.PIPE,

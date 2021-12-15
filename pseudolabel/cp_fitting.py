@@ -14,10 +14,10 @@ def splitting_data(
     tuner_output_images: str, intermediate_files_folder: str, fold_va: int = 2
 ):
     path_labels = os.path.join(
-        intermediate_files_folder, "y_sparse_step1_main_tasks_fold2.npy"
+        intermediate_files_folder, "y_sparse_step1_main_tasks_fold_val.npy"
     )
     fva_preds_path = os.path.join(
-        intermediate_files_folder, "pred_images_fold2-class.npy"
+        intermediate_files_folder, "pred_images_fold_val-class.npy"
     )
 
     path_sn = os.path.join(tuner_output_images, "results_tmp/folding/T2_folds.csv")
