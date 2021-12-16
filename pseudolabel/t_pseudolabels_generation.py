@@ -13,7 +13,8 @@ def generate_t_aux_pl(
     intermediate_files_folder: str,
     t2_melloddy_path: str,
     t2_images_path: str,
-    num_task_batch: int
+    num_task_batch: int,
+    assay_id_offset: int
 ):
     # add labels
     # integerization of compound id
@@ -26,16 +27,20 @@ def generate_t_aux_pl(
             f"image_pseudolabel_aux_nolabels/T1_image_pseudolabel_aux_nolabels_numbatch{num_task_batch}_taskbatch*.csv",
         )
     )
+    if len(list_t1_batches) == 0:
+        LOGGER.info(f"Found no files with pattern: {intermediate_files_folder}/image_pseudolabel_aux_nolabels/T1_image_pseudolabel_aux_nolabels_numbatch{num_task_batch}_taskbatch*.csv")
+        LOGGER.info("Please check file suffixes and config param 'number_task_batches' match")
+        quit()
 
     dat = []
     for t1_batch_file in list_t1_batches:
         dat.append(pd.read_csv(t1_batch_file))
     t1 = pd.concat(dat, ignore_index=True)
     LOGGER.info(f"Found {t1['input_assay_id'].nunique()} tasks with data in {intermediate_files_folder}/image_pseudolabel_aux_nolabels/")
+    del dat
 
     # T0 creation
-
-    n_image_id_start = 10000000  # (high number)\n",
+    n_image_id_start = assay_id_offset  # (high number)\n",
     image_cont_iai_to_new_iai = {
         e: i + n_image_id_start for i, e in enumerate(t1.input_assay_id.unique())
     }

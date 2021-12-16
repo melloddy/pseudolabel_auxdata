@@ -205,7 +205,8 @@ class PseudolabelPipe:
                 intermediate_files_folder=self.config.intermediate_files_folder,
                 t2_melloddy_path=self.config.t2_melloddy_path,
                 t2_images_path=self.config.t2_images_path,
-                num_task_batch=self.config.number_task_batches
+                num_task_batch=self.config.number_task_batches,
+                assay_id_offset=self.config.pseudolabel_assay_id_offset
             )
 
             LOGGER.info("Replacing pseudolabels values with true labels if applicable")

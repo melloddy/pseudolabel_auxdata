@@ -93,11 +93,12 @@ The list of parameters to be defined are :
   - `show_progress` : when set to true, the progress of the image-based model's hyperparameter scan is shown in the logs
   - `resume_hyperopt` : when set to true, the hyperparameters that are already explored (whose corresponding run's folder exists) are skipped.
   - `hyperopt_subset_ind` : Tuple containing beginning and end indices of the subset of hyperparameters to include in the hyperoptimization scan. The default value of the argument is **None** and this case all hyperparameters are included in the scan.
-* **Parameters related to the application of CP **
+* **Parameters related to the application of CP**
   - `number_task_batches`: <i>integer</i> defaulted to -1 (if negative, applies CPs to the whole set of tasks at onces , sequentially). If positive, chunks the list of tasks into the specified number of batches (not allowed: zero / different sign than apply_cp_to_task_batch).
   - `apply_cp_to_task_batch`: <i>integer</i> defaulted to -1 (if negative, applies CPs to the whole set of tasks at onces , sequentially). If positive, allows to specify the batch index onto which to apply CP. Depends on the number of batches requested (not allowed : zero / different sign than number_task_batches / > than number_task_batches - 1).
 
 * `pseudolabel_threshold`: threshold to use to filter pseudolabels with low confidence, it should be greater to the minimum threshold 0.8. (default value : 0.9)
+* `pseudolabel_assay_id_offset`: <i>integer</i> defaulted at 100,000,000 : input_assay_id offset at which to start indexing pseudo-label assays (pseudo label assays will increment based on this). Make sure it does not colide with  input_assay_ids used in other data sources. 
 
 ### Step 3: Run pipeline
 You can run the pipeline after configuring thr *config.json* file with the following command on the CLI:

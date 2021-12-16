@@ -57,6 +57,7 @@ class PseudolabelConfig:
     x_ysparse_batch_size: int = 100000
     apply_cp_to_task_batch: int = -1
     number_task_batches: int = -1
+    pseudolabel_assay_id_offset: int: 100000000
 
     @property
     def t8c_baseline(self) -> str:
