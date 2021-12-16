@@ -57,7 +57,7 @@ class PseudolabelConfig:
     x_ysparse_batch_size: int = 100000
     apply_cp_to_task_batch: int = -1
     number_task_batches: int = -1
-    pseudolabel_assay_id_offset: int: 100000000
+    pseudolabel_assay_id_offset: int = 100000000
 
     @property
     def t8c_baseline(self) -> str:
@@ -204,9 +204,8 @@ class PseudolabelConfig:
         self.__check_threshold()
         if self.hyperopt_subset_ind:
             self.__check_hyperopt_subset_ind()
-        if self.apply_cp_to_task_batch >= 0 or self.number_task_batches >=0:
+        if self.apply_cp_to_task_batch >= 0 or self.number_task_batches >= 0:
             self.__check_apply_cp_task_batch()
-
 
     @classmethod
     def load_config(cls, json_path: str) -> PseudolabelConfig:
