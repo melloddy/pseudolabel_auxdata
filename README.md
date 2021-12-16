@@ -85,7 +85,7 @@ The list of parameters to be defined are :
   - `torch_device`: device to use to run sparsechem CPU or GPU (valid values: "cpu" or "cuda")
   - `max_cpu`: maximum number of CPU to use when CPU is selected
   - `dataloader_num_workers` : number of worker to use in dataloader in sparsechem (needs to be set to 0 when using CPU on macOS)
-  - `x_ysparse_batch_size` : <i>integer</i> number of samples in batches (X and Y) to predict with image models (defaulted at 100K) to reduce memory consumption/avoid prediction of prohibitive datasets at prediction time. Lower than 0 leads to one single batch. Higher than the number of samples in the image feature dataset leads to one single batch. 
+  - `x_ysparse_batch_size` : <i>integer</i> number of samples in batches (X and Y) to predict with image models (defaulted at 100K) to reduce memory consumption/avoid prediction of prohibitive datasets at prediction time. Lower than 0 leads to one single batch. Higher than the number of samples in the image feature dataset leads to one single batch.
 * **Image model hyperparameter** : when not specified the default value of hyperparameters defined in *pseudolabel/constants.py* are used
   - `imagemodel_hidden_size` : list of hidden layers' sizes for image-based model's hyperparameter scan. A list of string for each hidden size layer. (*Ex: [["125"],["250","125","67"]]* )
   - `imagemodel_epochs_lr_steps`: list of tuple of number of epochs and corresponding learning rates for image-based model's hyperparameter scan
@@ -98,7 +98,7 @@ The list of parameters to be defined are :
   - `apply_cp_to_task_batch`: <i>integer</i> defaulted to -1 (if negative, applies CPs to the whole set of tasks at onces , sequentially). If positive, allows to specify the batch index onto which to apply CP. Depends on the number of batches requested (not allowed : zero / different sign than number_task_batches / > than number_task_batches - 1).
 
 * `pseudolabel_threshold`: threshold to use to filter pseudolabels with low confidence, it should be greater to the minimum threshold 0.8. (default value : 0.9)
-* `pseudolabel_assay_id_offset`: <i>integer</i> defaulted at 100,000,000 : input_assay_id offset at which to start indexing pseudo-label assays (pseudo label assays will increment based on this). Make sure it does not colide with  input_assay_ids used in other data sources. 
+* `pseudolabel_assay_id_offset`: <i>integer</i> defaulted at 100,000,000 : input_assay_id offset at which to start indexing pseudo-label assays (pseudo label assays will increment based on this). Make sure it does not colide with  input_assay_ids used in other data sources.
 
 ### Step 3: Run pipeline
 You can run the pipeline after configuring thr *config.json* file with the following command on the CLI:
@@ -117,7 +117,7 @@ Where `intermediate_step_name` is one of the following and corresponds to one of
 * image_model_hyperscan
 * fit_conformal_predictors
 * generate_all_predictions
-* apply_cp
+* apply_cp_aux
 * generate_T_files_pseudolabels
 
 
