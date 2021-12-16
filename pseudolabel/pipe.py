@@ -193,8 +193,8 @@ class PseudolabelPipe:
             if self.config.number_task_batches > 0:
                 # needs to quit here and make sure we have all batch runs before starting next step.
                 # we need to stop here and check manually
-                # unless we have a way to find out - at this point - the expected number of tasks 
-                # that have data saved in files produced by apply_cp_aux, we cannot proceed to next step 
+                # unless we have a way to find out - at this point - the expected number of tasks
+                # that have data saved in files produced by apply_cp_aux, we cannot proceed to next step
                 LOGGER.info("Done, please verify the completion - and restart pipeline from next step once all batches are complete (generate_T_files_pseudolabels)")
                 quit()
 
