@@ -1,7 +1,7 @@
+import glob
 import json
 import logging
 import os
-import glob
 
 import numpy as np
 import pandas as pd
@@ -14,7 +14,7 @@ def generate_t_aux_pl(
     t2_melloddy_path: str,
     t2_images_path: str,
     num_task_batch: int,
-    assay_id_offset: int
+    assay_id_offset: int,
 ):
     # add labels
     # integerization of compound id
@@ -28,15 +28,21 @@ def generate_t_aux_pl(
         )
     )
     if len(list_t1_batches) == 0:
-        LOGGER.info(f"Found no files with pattern: {intermediate_files_folder}/image_pseudolabel_aux_nolabels/T1_image_pseudolabel_aux_nolabels_numbatch{num_task_batch}_taskbatch*.csv")
-        LOGGER.info("Please check file suffixes and config param 'number_task_batches' match")
+        LOGGER.info(
+            f"Found no files with pattern: {intermediate_files_folder}/image_pseudolabel_aux_nolabels/T1_image_pseudolabel_aux_nolabels_numbatch{num_task_batch}_taskbatch*.csv"
+        )
+        LOGGER.info(
+            "Please check file suffixes and config param 'number_task_batches' match"
+        )
         quit()
 
     dat = []
     for t1_batch_file in list_t1_batches:
         dat.append(pd.read_csv(t1_batch_file))
     t1 = pd.concat(dat, ignore_index=True)
-    LOGGER.info(f"Found {t1['input_assay_id'].nunique()} tasks with data in {intermediate_files_folder}/image_pseudolabel_aux_nolabels/")
+    LOGGER.info(
+        f"Found {t1['input_assay_id'].nunique()} tasks with data in {intermediate_files_folder}/image_pseudolabel_aux_nolabels/"
+    )
     del dat
 
     # T0 creation

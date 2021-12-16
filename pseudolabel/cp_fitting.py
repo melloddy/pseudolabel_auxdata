@@ -8,7 +8,12 @@ import pandas as pd
 from scipy.sparse import csc_matrix, vstack
 from tqdm import tqdm
 
-from pseudolabel.cp_utils import cp_label_predictor, micp, prob_ncm, get_chunk_from_index
+from pseudolabel.cp_utils import (
+    cp_label_predictor,
+    get_chunk_from_index,
+    micp,
+    prob_ncm,
+)
 
 
 def splitting_data(
@@ -364,7 +369,9 @@ def apply_cp_aux(
             "pred_cpmodel_step2_inference_allcmpds_batch_*-class.npy",
         )
     )
-    assert len(pred_file_list) > 0, f"Cannot find prediction files in {predictions_folder}"
+    assert (
+        len(pred_file_list) > 0
+    ), f"Cannot find prediction files in {predictions_folder}"
 
     pred_batches = []
     for ind in range(len(pred_file_list)):
@@ -382,7 +389,7 @@ def apply_cp_aux(
     with open(os.path.join(analysis_folder, "cp/ncms_fva_fit_dict.json")) as fp:
         ncms_fva_fit_dict = json.load(fp)
 
-    cols = list(np.unique(preds[100,:].nonzero()[1]))
+    cols = list(np.unique(preds[100, :].nonzero()[1]))
 
     # if specified, get a chunk of cols onto which to apply CPs
     if num_task_batch > 0:
@@ -455,7 +462,8 @@ def apply_cp_aux(
         os.makedirs(image_pseudolabel_aux_nolabels, exist_ok=True)
         arr.to_csv(
             os.path.join(
-                image_pseudolabel_aux_nolabels, f"T1_image_pseudolabel_aux_nolabels_numbatch{num_task_batch}_taskbatch{task_batch}.csv"
+                image_pseudolabel_aux_nolabels,
+                f"T1_image_pseudolabel_aux_nolabels_numbatch{num_task_batch}_taskbatch{task_batch}.csv",
             ),
             index=False,
         )

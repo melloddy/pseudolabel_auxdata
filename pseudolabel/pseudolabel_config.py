@@ -187,15 +187,15 @@ class PseudolabelConfig:
         ), f"Subset's end index incorrect, needs to be <= {self.hyperopt_size}"
 
     def __check_apply_cp_task_batch(self):
-        assert self.apply_cp_to_task_batch != 0 and self.number_task_batches != 0, (
-            "Zero not allowed for config parameters `apply_cp_to_task_batch` and `number_cp_task_batches`"
-        )
-        assert (self.apply_cp_to_task_batch > 0 and self.number_task_batches > 0), (
-            "The two config parameters `apply_cp_to_task_batch` and `number_cp_task_batches` must be either > 0 or < 0 at the same time"
-        )
-        assert self.apply_cp_to_task_batch <= self.number_task_batches - 1, (
-            f"Cannot apply CP to a task batch > than the specified number of task batches {self.number_cp_task_batches}"
-        )
+        assert (
+            self.apply_cp_to_task_batch != 0 and self.number_task_batches != 0
+        ), "Zero not allowed for config parameters `apply_cp_to_task_batch` and `number_cp_task_batches`"
+        assert (
+            self.apply_cp_to_task_batch > 0 and self.number_task_batches > 0
+        ), "The two config parameters `apply_cp_to_task_batch` and `number_cp_task_batches` must be either > 0 or < 0 at the same time"
+        assert (
+            self.apply_cp_to_task_batch <= self.number_task_batches - 1
+        ), f"Cannot apply CP to a task batch > than the specified number of task batches {self.number_cp_task_batches}"
 
     def check_data(self):
         # TODO Add more checks
