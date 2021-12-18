@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-import shutil
 
 import numpy as np
 import pandas as pd
@@ -71,9 +70,17 @@ def generate_t_aux_pl(
         os.path.join(aux_data_dir, "T1_image_pseudolabels_no_labels.csv"), index=False
     )
 
-    shutil.copy(
-        dst=os.path.join(aux_data_dir, "T2_image_pseudolabels_no_labels.csv"),
-        src=t2_images_path,
+    t2_images = pd.read_csv(t2_images_path)
+    t2_melloddy = pd.read_csv(t2_melloddy_path)
+
+    t2_images_pseudolabels = (
+        pd.concat([t2_images, t2_melloddy])
+        .groupby(by="input_compound_id")
+        .first()
+        .reset_index()
+    )
+    t2_images_pseudolabels.to_csv(
+        os.path.join(aux_data_dir, "T2_image_pseudolabels_no_labels.csv"), index=False
     )
 
 
@@ -283,7 +290,7 @@ def replace_pseudolabels_w_labels(intermediate_files_folder: str):
     t2_image = t2_image.astype(dtype={"input_compound_id": "int64", "smiles": "str"})
 
     t0_images_pseudolabels = t0_image[
-        t0_image.input_assay_id.isin(t1_images_preds_w_true.input_assay_id)
+        t0_image.input_assay_id.isin(t1_images_preds_w_true.input_assay_id.unique())
     ]
 
     t1_images_pseudolabels = t1_images_preds_w_true[
@@ -292,7 +299,9 @@ def replace_pseudolabels_w_labels(intermediate_files_folder: str):
         )
     ]
     t2_images_pseudolabels = t2_image[
-        t2_image.input_compound_id.isin(t1_images_pseudolabels.input_compound_id)
+        t2_image.input_compound_id.isin(
+            t1_images_pseudolabels.input_compound_id.unique()
+        )
     ]
 
     os.makedirs(os.path.join(intermediate_files_folder, "aux_data_full"), exist_ok=True)
