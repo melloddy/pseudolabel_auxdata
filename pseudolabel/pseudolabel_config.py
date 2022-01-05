@@ -153,13 +153,32 @@ class PseudolabelConfig:
         utils.check_file_exists(self.ref_hash_json)
 
     def __t_images_check(self):
-        t_images = pd.read_csv(self.t_images_features_path)
+        t2_images = pd.read_csv(self.t2_images_path)
+        t_images_features = pd.read_csv(self.t_images_features_path, index_col=0)
+        t_images_features.index.names = ["input_compound_id"]
+        t_images_features = t_images_features.reset_index()
+        feature_not_in_t2 = t_images_features[
+            ~t_images_features.input_compound_id.isin(
+                t2_images.input_compound_id.unique()
+            )
+        ]
+        t2_not_in_features = t2_images[
+            ~t2_images.input_compound_id.isin(
+                t_images_features.input_compound_id.unique()
+            )
+        ]
         assert (
-            ~t_images.isna().any().any()
+            ~t_images_features.isna().any().any()
         ), f"{self.t_images_features_path} can't contain missing values"
         assert (
-            sum(t_images.input_compound_id.duplicated()) == 0
+            sum(t_images_features.input_compound_id.duplicated()) == 0
         ), f"{self.t_images_features_path} can't have duplicates"
+        assert (
+            len(feature_not_in_t2) == 0
+        ), f"{self.t_images_features_path} has more compounds than {self.t2_images_path} : {len(feature_not_in_t2)}"
+        assert (
+            len(t2_not_in_features) == 0
+        ), f"{self.t2_images_path} has more compounds than {self.t_images_features_path} : {len(t2_not_in_features)}"
 
     def __check_sparsechem(self):
         # TODO
