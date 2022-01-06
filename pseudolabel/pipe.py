@@ -180,7 +180,7 @@ class PseudolabelPipe:
 
             cp_fitting.apply_cp_aux(
                 analysis_folder=self.config.analysis_folder,
-                t2_images_path=self.config.t2_images_path,
+                t_images_features_path=self.config.t_images_features_path,
                 intermediate_files=self.config.intermediate_files_folder,
             )
 
