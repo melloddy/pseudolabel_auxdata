@@ -351,7 +351,7 @@ def generate_task_stats(analysis_folder: str):
 
 def apply_cp_aux(
     analysis_folder: str,
-    t2_images_path: str,
+    t_images_features_path: str,
     intermediate_files: str,
     eps: float = 0.05,
 ):
@@ -421,7 +421,7 @@ def apply_cp_aux(
 
     tasks_for_aux = df_stats.query("n_active_pred>0 and n_inactive_pred>0")["col_indx"]
 
-    input_compound_ids = pd.read_csv(t2_images_path, usecols=["input_compound_id"])
+    t_image_features = pd.read_csv(t_images_features_path, usecols=[0])
 
     arrs = []
     for task in tqdm(tasks_for_aux):
@@ -429,7 +429,7 @@ def apply_cp_aux(
             pd.DataFrame(
                 {
                     "standard_value": cp_values[task],
-                    "input_compound_id": input_compound_ids["input_compound_id"].values,
+                    "input_compound_id": t_image_features.iloc[:, 0].values,
                     "standard_qualifier": "=",
                     "input_assay_id": task,
                 }
